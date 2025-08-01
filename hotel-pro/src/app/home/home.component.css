@@ -1,0 +1,111 @@
+/* 1) Section setup */
+.destinations {
+  background: #B4CDE1;       /* light‑blue background from your screenshot */
+  padding: 80px 20px;
+  text-align: center;
+  font-family: 'Open Sans', sans-serif;
+  color: #222;
+}
+
+.destinations__wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 2) Title + subtitle */
+.destinations__title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.1;
+}
+
+.destinations__subtitle {
+  font-size: 18px;
+  line-height: 1.5;
+  max-width: 600px;
+  margin: 0 auto 60px;
+  color: #222;
+}
+
+/* 3) Grid of cards */
+.destinations__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+}
+
+/* 4) Individual card */
+.card {
+  position: relative;
+  background: #fff;
+  /* border-radius: 20px; */
+  overflow: visible;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* 4a) Accent stripe on left */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -16px;
+  width: 16px;
+  height: 100%;
+  background: #387EBE;                /* darker blue accent */
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+/* 5) Card inner padding & layout */
+.card__inner {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* 6) Circular image */
+.card__img {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 24px;
+}
+
+/* 7) Card heading */
+.card__heading {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+
+/* 8) Card body text */
+.card__text {
+  flex: 1;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  font-style: italic;
+  color: #555;
+}
+
+/* 9) “MORE” link */
+.card__link {
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-weight: 600;
+  color: #222;
+  align-self: flex-start;
+}
+
+/* 10) Responsive — single‑column under 768px */
+@media (max-width: 768px) {
+  .destinations__grid {
+    grid-template-columns: 1fr;
+  }
+}

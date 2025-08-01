@@ -1,0 +1,130 @@
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.closed]="!sidebarVisible">
+    <h2 class="logo" [routerLink]="['/']">Hotel UI</h2>
+    <nav class="sidebar-nav">
+      <ul>
+        <!-- Dashboard -->
+        <li class="menu-item active">
+          <a routerLink="/home">
+            <svg class="icon" viewBox="0 0 24 24">
+              <path d="M3 12l9-9 9 9-1.5 1.5L12 4.5 4.5 13.5z" />
+              <path d="M12 21V9h6v12z" />
+            </svg>
+            Dashboard
+          </a>
+        </li>
+
+        <li class="section-title">LAYOUTS & PAGES</li>
+
+        <!-- Pages (collapsible) -->
+        <li class="menu-item has-sub">
+          <button class="submenu-toggle">
+            <svg class="icon" viewBox="0 0 24 24">
+              <path d="M3 7h18M3 12h18M3 17h18" />
+            </svg>
+            Pages
+            <svg class="icon-chevron" viewBox="0 0 24 24">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+          <ul class="sub-menu">
+            <li><a routerLink="/catalog">Guest-Catalog</a></li>
+            <li><a routerLink="/cruise">Cruises</a></li>
+
+          </ul>
+        </li>
+
+        <!-- Authentication (collapsible) -->
+        <li class="menu-item has-sub">
+          <button class="submenu-toggle" *ngIf="!userService.isLogged">
+            Verify</button>
+          <button class="submenu-toggle">
+            Authentication
+            <svg class="icon-chevron" viewBox="0 0 24 24">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+          <ul class="sub-menu" *ngIf="!userService.isLogged">
+            <li><a routerLink="/login">Login</a></li>
+            <li><a routerLink="/register">Register</a></li>
+          </ul>
+          <ul class="sub-menu" *ngIf="userService.isLogged">
+            <li><a routerLink="/">MyProfile</a></li>
+            <li (click)="logout()">Logout</li>
+          </ul>
+
+        </li>
+
+        <li class="menu-item">
+          <a routerLink="/room" fragment="table">
+            <svg class="icon" viewBox="0 0 24 24">
+              <path d="M3 3h18v8H3zM3 13h18v8H3z" />
+            </svg>
+            Room
+          </a>
+        </li>
+
+        <li class="section-title">UI COMPONENTS</li>
+        <li class="menu-item has-sub">
+          <button class="submenu-toggle">
+            <svg class="icon" viewBox="0 0 24 24">
+              <path d="M4 4h16v16H4z" />
+            </svg>
+            Components
+            <svg class="icon-chevron" viewBox="0 0 24 24">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+          <ul class="sub-menu long">
+            <li><a routerLink="/guest">Accordions</a></li>
+            <li><a routerLink="/alerts">Alerts</a></li>
+            <li><a routerLink="/badges">Badges</a></li>
+            <li><a routerLink="/breadcrumbs">Breadcrumbs</a></li>
+            <li><a routerLink="/buttons">Buttons</a></li>
+            <li><a routerLink="/buttongroup">ButtonGroup</a></li>
+            <li><a routerLink="/cards">Cards</a></li>
+            <li><a routerLink="/carousel">Carousel</a></li>
+            <li><a routerLink="/closebutton">Close Button</a></li>
+            <li><a routerLink="/collapse">Collapse</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Main content -->
+  <div class="content">
+    <header class="topbar">
+      <nav class="top-nav">
+        <button class="btn-hamburger" (click)="toggleSidebar()" aria-label="Toggle sidebar">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+        <div class="nav-center">
+          <input type="text" placeholder="Search" class="nav-search" />
+        </div>
+        <div class="nav-actions" *ngIf="userService.isLogged">
+          <button class="btn-notif" aria-label="Notifications">🔔</button>
+
+          <div class="nav-profile">
+            <img
+              src="https://static.vecteezy.com/system/resources/previews/019/465/366/original/3d-user-icon-on-transparent-background-free-png.png"
+              alt="User" class="profile-img" />
+            <span class="status-indicator"></span>
+
+            <ul class="user-dropdown">
+              <li><a routerLink="/profile">Профил</a></li>
+              <li (click)="logout()">Изход</li>
+            </ul>
+          </div>
+        </div>
+
+      </nav>
+    </header>
+    <main class="main">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

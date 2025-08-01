@@ -1,0 +1,42 @@
+<!-- catalog.component.html -->
+<div class="cruise-select-wrapper">
+  <svg class="icon-ship.svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+  <path d="M2 21h20v-2l-1-7-9-5-9 5-1 7v2zm9-12.293l7 3.889v2.223l-7-3.889-7 3.889v-2.223l7-3.889zm-7 5.477l7-3.889 7 3.889v1.816l-7-3.889-7 3.889v-1.816zm0 4.816h14v2h-14v-2z"/>
+</svg>
+  <select #cruiseSel [value]="cruiseId()" (change)="onSelectCruise(cruiseSel.value)">
+    <option disabled [selected]="!cruiseId()">Choose cruise…</option>
+    <option *ngFor="let cruise of cruises()" [value]="cruise._id">
+      {{ cruise.name }}
+    </option>
+  </select>
+</div>
+
+<!-- UX: Ако няма избран круиз -->
+<div *ngIf="!cruiseId()">
+  <p class="empty-state">To see guests choose a certain cruise.</p>
+</div>
+
+<!-- UX: Ако има избран круиз -->
+<input  *ngIf="cruiseId()"class="guest-search" type="text" [(ngModel)]="search" placeholder="Търси по име…" />
+
+<ul class="catalog-list" *ngIf="cruiseId() && filteredGuests().length > 0; else noGuestsBlock">
+  <li class="catalog-item" *ngFor="let guest of filteredGuests(); trackBy: trackById">
+    <span class="icon-guest">&#128100;</span>
+    <div class="guest-info">
+      <h3>{{ guest.firstName }} {{ guest.lastName }}</h3>
+      <p><strong>Room:</strong> {{ guest.roomNumber }}</p>
+      <p *ngIf="cruises()?.length">
+        <strong>Cruise:</strong> {{ getCruiseNameById(guest.cruiseId, cruises()) }}
+      </p>
+      <p><strong>Email:</strong> {{ guest.email }}</p>
+      <a [routerLink]="['/guests', guest._id]">View Details</a>
+    </div>
+  </li>
+</ul>
+
+<!-- UX: Ако няма гости за избрания круиз -->
+<ng-template #noGuestsBlock>
+  <div *ngIf="cruiseId()" class="empty-state" style="margin-top:2em;">
+    <em>There aren't guests for this cruise.</em>
+  </div>
+</ng-template>

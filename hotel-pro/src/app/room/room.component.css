@@ -1,0 +1,120 @@
+.deck-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+   display: flex;
+  gap: 4px;
+}
+
+.room {
+  width: 50px;
+  height: 60px;
+  background-color: #f0f0f0;
+  font-size: 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ccc;
+  position: relative;
+}
+
+.room .top {
+  display: none;
+  font-weight: bold;
+  color: #000;
+}
+
+.room:hover .top {
+  display: block;
+}
+.room .middle {
+  font-weight: bold;
+  transition: transform 0.2s ease;
+}
+
+.room:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.room:hover .top {
+  color: #000;
+  font-weight: bold;
+}
+
+.room .bottom {
+  font-size: 10px;
+  padding-bottom: 2px;
+}
+
+.vip-badge {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  background: green;
+  color: white;
+  font-size: 9px;
+  padding: 1px 3px;
+  border-radius: 2px;
+}
+
+.rhc {
+  background: orange;
+  color: white;
+  font-size: 9px;
+  padding: 1px 3px;
+  border-radius: 2px;
+  font-weight: bold;
+}
+
+/* Цветови класове */
+.room.yellow { background-color: #ffff99; }
+.room.blue   { background-color: #99ccff; }
+.room.red    { background-color: #ff9999; }
+.room.gray   { background-color: #dddddd; }
+.room.green  { background-color: #c0ffc0; }
+
+.room.label {
+  background-color: transparent;
+  border: none;
+  font-weight: bold;
+}
+/* Edit Button */
+.edit-btn {
+  margin-left: 14px;
+  padding: 5px 12px;
+  background: #ffe082;
+  color: #184065;
+  border: none;
+  border-radius: 7px;
+  font-weight: 600;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.14s;
+  display: inline-flex;
+  align-items: center;
+}
+.edit-btn:hover {
+  background: #ffd54f;
+}
+.edit-btn .icon {
+  margin-right: 6px;
+  font-size: 1.1em;
+}
+.modal-guest {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.modal-actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}

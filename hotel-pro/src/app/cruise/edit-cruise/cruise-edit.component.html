@@ -1,0 +1,16 @@
+<div class="card" *ngIf="cruise">
+  <form #f="ngForm" (ngSubmit)="onSubmit(f)" class="general">
+    <h1>Редактирай круиз</h1>
+    <label>Име на круиз</label>
+    <input name="name" [(ngModel)]="cruise.name" required />
+
+    <label>Начална дата</label>
+    <input name="startDate" [(ngModel)]="cruise.startDate" type="date" required />
+
+    <label>Крайна дата</label>
+    <input name="endDate" [(ngModel)]="cruise.endDate" type="date" required />
+
+    <button type="submit" [disabled]="f.invalid" class="add-btn">Запази</button>
+    <button type="button" (click)="onCancel()" class="cancel-btn">Отказ</button>
+  </form>
+</div>

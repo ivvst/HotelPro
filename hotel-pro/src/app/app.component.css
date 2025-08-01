@@ -1,0 +1,329 @@
+.layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* Sidebar base */
+.sidebar {
+  width: 240px;
+
+  background: #1f2a40;
+
+  color: #fff;
+
+  transition: transform 0.3s cubic-bezier(.86, 0, .07, 1);
+
+  will-change: transform;
+
+  z-index: 100;
+
+  position: relative;
+  overflow-y: hidden;
+  /* always at left edge */
+  transition: transform 0.3s;
+  transform: translateX(0);
+}
+
+.sidebar:hover {
+  overflow-y: auto;
+}
+
+.sidebar.closed {
+  transform: translateX(-100%);
+  position: absolute;
+
+  left: 0;
+
+  top: 0;
+
+  height: 100vh;
+}
+
+.content {
+
+  flex: 1 1 0%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  min-width: 0;
+}
+
+.main {
+
+  flex: 1 1 auto;
+
+  width: 100%;
+
+  padding: 0 2vw;
+
+  background: rgb(249, 184, 184);
+  /* твоя син фон */
+
+  min-height: 100vh;
+  overflow-y: auto;
+  /* Може да добавиш и това ако съдържанието расте много: */
+  max-height: 100vh;
+}
+
+.container {
+  display: flex;
+}
+
+.logo {
+  font-size: 1.5rem;
+  color: white;
+  margin-bottom: 2rem;
+}
+
+/* Navigation */
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-item {
+  margin-bottom: 0.5rem;
+}
+
+.menu-item a,
+.menu-item button.submenu-toggle {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  padding: 0.5rem 0;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.menu-item a:hover,
+.menu-item button.submenu-toggle:hover,
+.menu-item.active a {
+  background: #283347;
+  color: white;
+}
+
+/* Icons */
+.icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 0.75rem;
+  fill: currentColor;
+}
+
+.icon-chevron {
+  margin-left: auto;
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  transition: transform 0.2s;
+}
+
+.has-sub .icon-chevron {
+  transform: rotate(0deg);
+}
+
+.has-sub.open .icon-chevron {
+  transform: rotate(180deg);
+}
+
+/* Section titles */
+.section-title {
+  margin: 1.5rem 0 0.75rem;
+  font-size: 0.75rem;
+  color: #475569;
+  letter-spacing: 0.05em;
+}
+
+/* Sub-menus */
+.sub-menu {
+  list-style: none;
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+  display: none;
+}
+
+.has-sub.open .sub-menu {
+  display: block;
+}
+
+.sub-menu li {
+  margin-bottom: 0.5rem;
+}
+
+.sub-menu.long {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Scrollbar for long sub-menu */
+.sub-menu.long::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sub-menu.long::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+.topbar {
+  width: 100%;
+  background: linear-gradient(90deg, #6b46c1 0%, #805ad5 100%);
+  margin: 0;
+  padding: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(90deg, #6b46c1 0%, #805ad5 100%);
+}
+
+.btn-hamburger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 6px;
+  justify-content: center;
+  align-items: center;
+}
+
+.hamburger-line {
+  display: block;
+  width: 28px;
+  height: 3px;
+  background: #fff;
+  /* или друг цвят според topbar-а */
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+
+/* (optional) Hide the button if the sidebar is open and on large screens: */
+
+/* @media (min-width: 800px) {
+
+  .btn-hamburger { display: none; }
+
+} */
+
+.nav-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.nav-search {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.5rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-notif {
+  background: white;
+  border: none;
+  border-radius: 50%;
+  padding: 0.5rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.nav-profile {
+  position: relative;
+  cursor: pointer;
+}
+
+
+.profile-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.status-indicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background: #48bb78;
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+  width: 150px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  /* Анимация: скрито по подразбиране */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-10px);
+  transition: all 0.25s ease-in-out;
+}
+
+.nav-profile:hover .user-dropdown {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+
+.has-sub .sub-menu {
+  display: none;
+}
+
+/* При hover върху родителя – показваме sub-menu */
+.has-sub:hover>.sub-menu {
+  display: block;
+}
+
+/* (По избор) Завъртаме малко chevron при показване */
+.has-sub:hover .icon-chevron {
+  transform: rotate(180deg);
+  transition: transform .2s;
+}
+
+.user-dropdown li {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.user-dropdown li:hover {
+  background: #f5f5f5;
+}

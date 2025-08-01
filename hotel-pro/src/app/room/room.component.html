@@ -1,0 +1,74 @@
+<!-- Навигация за избор на круиз -->
+<nav class="room-nav-links">
+  <label>Select cruise:</label>
+  <select [(ngModel)]="selectedCruiseId">
+    <option [ngValue]="null" disabled selected>-- Select --</option>
+    <option *ngFor="let c of cruises" [ngValue]="c._id">{{ c.name }}</option>
+  </select>
+</nav>
+
+<div *ngIf="selectedCruiseId">
+  <h2>Room Occupancy for Cruise: {{ getCruiseNameById(selectedCruiseId) }}</h2>
+
+  <!-- Rhine Deck -->
+  <div class="deck rhine">
+    <h3>Rhine Deck</h3>
+    <div class="row">
+      <div *ngFor="let room of rhineRooms; trackBy: trackById" class="room"
+        [ngClass]="room.guestCount === 1 ? 'yellow' : 'blue'" (click)="openRoomModal(room)">
+        <div class="top" *ngIf="room.guestCount > 0">{{ room.guestCount }}</div>
+        <div class="middle">{{ room.number }}</div>
+        <div class="bottom">
+          <span *ngIf="room.isVip" class="rhc">VIP</span>
+          <span *ngIf="room.guestCount === 0">Empty</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Deck -->
+  <div class="deck main">
+    <h3>Main Deck</h3>
+    <div class="row">
+      <div *ngFor="let room of mainRooms; trackBy: trackById" class="room"
+        [ngClass]="room.guestCount === 1 ? 'yellow' : 'blue'" (click)="openRoomModal(room)">
+        <div class="top" *ngIf="room.guestCount > 0">{{ room.guestCount }}</div>
+        <div class="middle">{{ room.number }}</div>
+        <div class="bottom">
+          <span *ngIf="room.isVip" class="rhc">VIP</span>
+          <span *ngIf="room.guestCount === 0">Empty</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Модал за действия върху стая -->
+<div class="room-action-modal" *ngIf="selectedRoom">
+  <div class="modal-content">
+    <div style="margin-bottom: 16px; font-weight: bold;">
+      Room {{ selectedRoom.number }}
+    </div>
+
+    <!-- Списък с гостите в стаята -->
+    <div *ngIf="guestsInSelectedRoom().length > 0; else noGuests">
+      <div *ngFor="let guest of guestsInSelectedRoom()" class="modal-guest">
+        {{ guest.firstName }} {{ guest.lastName }}
+        <button class="edit-btn" (click)="editGuest(guest._id!)">
+          <span class="icon">✏️</span> Редактирай
+        </button>
+      </div>
+    </div>
+    <ng-template #noGuests>
+      <div style="color: #888; font-style: italic;">Няма гости в тази стая.</div>
+    </ng-template>
+
+    <!-- Останалите бутони -->
+    <div class="modal-actions">
+      <button (click)="addGuestToRoom(selectedRoom)" [disabled]="selectedRoom.guestCount >= 2">
+        Add guest/s
+      </button>
+      <button (click)="closeRoomModal()">Cancel</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<div class="card">
+  <form #f="ngForm" (ngSubmit)="onSubmit(f)" class="general">
+    <h1>Добави гост</h1>
+
+    <label>First Name</label>
+    <input name="firstName" [(ngModel)]="guest.firstName" required />
+
+    <label>Last Name</label>
+    <input name="lastName" [(ngModel)]="guest.lastName" required />
+
+    <label>Email</label>
+    <input name="email" [(ngModel)]="guest.email" type="email" required />
+
+    <label>Nationality</label>
+    <input name="nationality" [(ngModel)]="guest.nationality" required />
+
+    <label>Birth Date</label>
+    <input name="birthDate" [(ngModel)]="guest.birthDate" type="date" required />
+
+    <label>Stay From</label>
+    <input name="stayFrom" [(ngModel)]="guest.stayFrom" type="date" disabled />
+
+    <label>Stay To</label>
+    <input name="stayTo" [(ngModel)]="guest.stayTo" type="date" disabled />
+
+    <label>Room Number</label>
+    <input name="roomNumber" [value]="guest.roomNumber" disabled />
+
+    <label>Cruise ID</label>
+    <input name="cruiseId" [value]="guest.cruiseId" disabled />
+
+    <label>Picture (Google Drive/Dropbox URL):</label>
+    <input name="picture" [(ngModel)]="guest.picture" placeholder="https://..." />
+
+    <button type="submit" [disabled]="f.invalid" class="add-btn">Добави гост</button>
+    <button type="button" (click)="onCancel()" class="cancel-btn">Cancel</button>
+
+  </form>
+</div>

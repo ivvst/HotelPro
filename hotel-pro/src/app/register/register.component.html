@@ -1,0 +1,50 @@
+<body class="main-bg">
+    <div class="login-container text-c animated flipInX">
+        <div>
+            <h1 class="logo-badge text-whitesmoke">
+                <span class="fa fa-user-plus"></span>
+            </h1>
+        </div>
+
+        <h3 class="text-whitesmoke">Create Account</h3>
+        <p class="text-whitesmoke">Register</p>
+
+        <div class="container-content">
+            <form class="margin-t" (ngSubmit)="onSubmit()" #registerForm="ngForm">
+                <div class="form-group">
+                    <input type="text" name="username" class="form-control" placeholder="Username" required
+                        [(ngModel)]="formData.username" />
+                </div>
+
+                <div class="form-group">
+                    <input type="text" name="fullName" class="form-control" placeholder="Full Name" required
+                        [(ngModel)]="formData.fullName" />
+                </div>
+
+                <div class="form-group">
+                    <input type="email" name="email" class="form-control" placeholder="Email" required
+                        [(ngModel)]="formData.email" />
+                </div>
+
+                <div class="form-group">
+                    <input type="password" name="password" class="form-control" placeholder="Password" required
+                        [(ngModel)]="formData.password" />
+                </div>
+
+                <div class="form-group">
+                    <input type="password" name="repeatPassword" class="form-control" placeholder="Repeat Password"
+                        required [(ngModel)]="formData.repeatPassword" />
+                </div>
+
+                <button type="submit" class="form-button button-l margin-b">Register</button>
+
+                <p class="text-whitesmoke text-center"><small>Already have an account?</small></p>
+                <a class="text-darkyellow" routerLink="/login" (click)="onLinkClick()">
+                    <small>Login</small>
+                </a>
+            </form>
+
+            <p class="margin-t text-whitesmoke"><small>© Your Project 2025</small></p>
+        </div>
+    </div>
+</body>

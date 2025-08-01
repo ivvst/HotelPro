@@ -1,0 +1,72 @@
+<div class="card">
+  <h2>Cruises</h2>
+  <button (click)="addCruise()">Add Cruise</button>
+
+  <!-- Ако няма избран круиз: Показваме таблицата -->
+  <div *ngIf="!selectedCruise()">
+    <table class="cruise-table">
+      <thead>
+        <tr>
+          <th>Cruise</th>
+          <th>Excursions</th>
+          <th>Guests</th>
+          <th>Fill %</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cruise of pagedCruises(); trackBy: trackById">
+          <td>{{ cruise.name }}</td>
+          <td>{{ getExcursionCount(cruise) }}</td>
+          <td>{{ getGuestCount(cruise._id) }} / {{ MAX_GUESTS }}</td>
+          <td>
+            <div class="progress-bar-wrapper">
+              <div class="progress-bar" [style.width.%]="getFilledPercent(cruise._id)"></div>
+            </div>
+            <span>{{ getFilledPercent(cruise._id) }}%</span>
+          </td>
+          <td>
+            <button (click)="checkGuests(cruise._id)">Show guests</button>
+            <button (click)="showDetails(cruise)">Details</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <nav class="pagination" *ngIf="totalPages() > 1">
+      <button (click)="prevPage()" [disabled]="page() === 1">&laquo; Prev</button>
+      <ng-container *ngFor="let p of [].constructor(totalPages()); let i = index">
+        <button (click)="setPage(i+1)" [class.active]="page() === (i+1)">
+          {{ i+1 }}
+        </button>
+      </ng-container>
+      <button (click)="nextPage()" [disabled]="page() === totalPages()">Next &raquo;</button>
+    </nav>
+  </div>
+
+  <!-- Ако има избран круиз: Показваме детайлите -->
+  <div *ngIf="selectedCruise()">
+    <h3>Details for {{ selectedCruise()?.name }}</h3>
+    <p><b>ID:</b> {{ selectedCruise()?._id }}</p>
+    <p><b>Start Date:</b> {{ selectedCruise()?.startDate }}</p>
+    <p><b>End Date:</b> {{ selectedCruise()?.endDate }}</p>
+    <p><b>Excursions:</b> {{ getExcursionCount(selectedCruise()!) }}</p>
+    <p><b>Guests:</b> {{ getGuestCount(selectedCruise()?._id) }} / {{ MAX_GUESTS }}</p>
+    <!-- Добави тук каквито други детайли искаш -->
+    <button (click)="backToCruises()">Back</button>
+  </div>
+</div>
+
+
+
+<!-- 
+ Pagination controls showing after certain amount of Cruises
+  <nav class="pagination" *ngIf="totalPages() > 1">
+    <button (click)="prevPage()" [disabled]="page() === 1">&laquo; Prev</button>
+    <ng-container *ngFor="let p of [].constructor(totalPages()); let i = index">
+      <button (click)="setPage(i+1)" [class.active]="page() === (i+1)">
+        {{ i+1 }}
+      </button>
+    </ng-container>
+    <button (click)="nextPage()" [disabled]="page() === totalPages()">Next &raquo;</button>
+  </nav>
+</div> -->

@@ -1,0 +1,22 @@
+<body class="main-bg">
+  <div class="login-container text-c animated flipInX">
+    <div>
+      <h1 class="logo-badge text-whitesmoke"><span class="fa fa-user-circle"></span></h1>
+    </div>
+    <h3 class="text-whitesmoke">Login</h3>
+    <div class="container-content">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="margin-t">
+        <div class="form-group">
+          <input type="email" class="form-control" placeholder="Email" formControlName="email" />
+        </div>
+        <div class="form-group">
+          <input type="password" class="form-control" placeholder="Password" formControlName="password" />
+        </div>
+        <button type="submit" class="form-button button-l margin-b" [disabled]="form.invalid">Sign In</button>
+      </form>
+      <p class="text-whitesmoke text-center"><small>Don't have an account?</small></p>
+      <a class="text-darkyellow" routerLink="/register" (click)="onLinkClick()"><small>Sign Up</small></a>
+      <p class="margin-t text-whitesmoke"><small>Your App &copy; 2025</small></p>
+    </div>
+  </div>
+</body>

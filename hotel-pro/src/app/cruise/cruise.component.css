@@ -1,0 +1,82 @@
+.card {
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px #0002;
+  max-width: 900px;
+}
+
+.cruise-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+}
+
+.cruise-table th, .cruise-table td {
+  padding: 0.7em 1em;
+  text-align: center;
+  border-bottom: 1px solid #e2e2e2;
+}
+
+.cruise-table th {
+  background: #faf7ff;
+  color: #5836b7;
+  font-weight: 600;
+}
+
+.cruise-table td {
+  background: #f6f7fb;
+  font-size: 1rem;
+}
+
+.progress-bar-wrapper {
+  width: 80px;
+  height: 12px;
+  background: #e5e5ed;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0 auto 3px auto;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #6b46c1 50%, #805ad5 100%);
+  border-radius: 8px 0 0 8px;
+  transition: width 0.4s;
+}
+
+.fill-percent {
+  font-size: 0.95em;
+  color: #4535a2;
+}
+
+button {
+  padding: 0.5em 1.1em;
+  margin: 0 0.2em;
+  border: none;
+  background: #6b46c1;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.18s;
+}
+
+button[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination {
+  display: flex;
+  gap: 0.3em;
+  justify-content: center;
+  margin-top: 1em;
+}
+
+.pagination button.active {
+  background: #805ad5;
+  color: #fff;
+  font-weight: bold;
+}

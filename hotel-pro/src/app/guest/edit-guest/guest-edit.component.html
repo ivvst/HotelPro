@@ -1,0 +1,64 @@
+<div class="card">
+    <form #f="ngForm" (ngSubmit)="onSubmit(f)" class="general" *ngIf="guest">
+        <h1>Редактирай гост</h1>
+
+        <label>First Name</label>
+        <input name="firstName" [(ngModel)]="guest.firstName" required />
+
+        <label>Last Name</label>
+        <input name="lastName" [(ngModel)]="guest.lastName" required />
+
+        <label>Email</label>
+        <input name="email" [(ngModel)]="guest.email" type="email" required />
+
+        <label>Nationality</label>
+        <input name="nationality" [(ngModel)]="guest.nationality" required />
+
+        <label>Birth Date</label>
+        <input name="birthDate" [(ngModel)]="guest.birthDate" type="date" required />
+
+        <label>Stay From</label>
+        <input name="stayFrom" [(ngModel)]="guest.stayFrom" type="date" required />
+
+        <label>Stay To</label>
+        <input name="stayTo" [(ngModel)]="guest.stayTo" type="date" required />
+
+        <label>Room Number</label>
+        <input name="roomNumber" [(ngModel)]="guest.roomNumber" type="number" required />
+
+        <label>Cruise</label>
+        <div class="input-static">
+            {{ getCruiseNameById(guest.cruiseId) }}
+        </div>
+
+        <label>Picture (Google Drive/Dropbox URL):</label>
+        <input name="picture" [(ngModel)]="guest.picture" placeholder="https://..." />
+
+        <div *ngIf="guest.picture" style="margin-top:8px;">
+            <a [href]="guest.picture" target="_blank">{{ guest.picture }}</a>
+            <div style="margin-top:5px;">
+                <img [src]="guest.picture" alt="Картинка"
+                    style="max-width:120px;max-height:80px;object-fit:contain;border-radius:5px;">
+            </div>
+        </div>
+        <!-- <label>
+      <input type="checkbox" [(ngModel)]="guest.isVIP" name="isVIP" />
+      VIP Guest
+    </label>
+
+    <label>
+      <input type="checkbox" [(ngModel)]="guest.isRhc" name="isRhc" />
+      RHC Member
+    </label> -->
+
+        <!-- За екскурзии и VIP услуги (може да са списъци, тук само като текст за пример) -->
+        <!-- <label>Excursions (CSV):</label>
+    <input name="excursions" [(ngModel)]="guest.excursions" placeholder="Excursion1, Excursion2" />
+
+    <label>VIP Services (CSV):</label>
+    <input name="vipServices" [(ngModel)]="guest.vipServices" placeholder="Service1, Service2" /> -->
+
+        <button type="submit" [disabled]="f.invalid" class="add-btn">Запази</button>
+        <button type="button" (click)="onCancel()" class="cancel-btn">Отказ</button>
+    </form>
+</div>
