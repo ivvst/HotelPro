@@ -1,0 +1,73 @@
+<div class="exc-list-wrapper">
+  <h3>Екскурзии към круиза</h3>
+
+  <form (ngSubmit)="submit()" #exForm="ngForm" class="ex-form">
+    <input
+      type="text"
+      [(ngModel)]="formData.name"
+      name="name"
+      required
+      placeholder="Име на екскурзия"
+    />
+    <input
+      type="date"
+      [(ngModel)]="formData.date"
+      name="date"
+      required
+      placeholder="Дата"
+    />
+    <input
+      type="time"
+      [(ngModel)]="formData.fromTime"
+      name="fromTime"
+      required
+      placeholder="От час"
+    />
+    <input
+      type="time"
+      [(ngModel)]="formData.toTime"
+      name="toTime"
+      required
+      placeholder="До час"
+    />
+    <textarea
+      [(ngModel)]="formData.description"
+      name="description"
+      placeholder="Описание (незадължително)">
+    </textarea>
+    <button type="submit" [disabled]="exForm.invalid">
+      {{ editExcursion ? 'Запази' : 'Добави' }}
+    </button>
+    <button *ngIf="editExcursion" type="button" (click)="cancelEdit()">Отказ</button>
+  </form>
+
+  <div *ngIf="loading">Зареждане...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <table *ngIf="excursions.length" class="exc-table">
+    <thead>
+      <tr>
+        <th>Име</th>
+        <th>Дата</th>
+        <th>От</th>
+        <th>До</th>
+        <th>Описание</th>
+        <th>Действия</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ex of excursions">
+        <td>{{ ex.name }}</td>
+        <td>{{ ex.date }}</td>
+        <td>{{ ex.fromTime }}</td>
+        <td>{{ ex.toTime }}</td>
+        <td>{{ ex.description }}</td>
+        <td>
+          <button (click)="startEdit(ex)">Редактирай</button>
+          <button (click)="deleteExcursion(ex._id!)">Изтрий</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="!excursions.length && !loading" class="empty">Няма екскурзии</div>
+</div>

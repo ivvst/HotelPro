@@ -1,6 +1,6 @@
 <div class="guest-details-card" *ngIf="guest as g">
     <h2>{{ g.firstName }} {{ g.lastName }}</h2>
-    <img [src]="g?.picture" alt="Profile picture" class="profile-picture" />
+    <!-- <img [src]="g?.picture" alt="Profile picture" class="profile-picture" /> -->
 
     <div class="g-info">
         <div><b>Стая:</b> {{ g?.roomNumber }}</div>
@@ -8,29 +8,21 @@
         <!-- <div><b>VIP:</b> {{ g.isVIP ? 'Да' : 'Не' }}</div> -->
         <!-- <div *ngIf="g.vipServices?.length"><b>VIP услуги:</b> {{ g.vipServices.join(', ') }}</div> -->
         <div><b>Круиз:</b> {{ cruise?.name }}</div>
+     
     </div>
 
     <hr />
 
     <h3>Екскурзии</h3>
-    <ul class="excursion-list">
-        <li *ngFor="let ex of g.excursions">
-            {{ ex.name }}
-            <!-- <span *ngIf="ex.date">({{ ex.date }})</span> -->
-            <button class="remove-btn" (click)="removeExcursionFromGuest(ex._id)">Премахни</button>
-        </li>
-        <li *ngIf="!g.excursions.length" class="empty">Няма записани екскурзии</li>
-    </ul>
-
-    <button class="add-btn" (click)="showDropdown = !showDropdown">Добави екскурзия</button>
-
-    <div *ngIf="showDropdown" class="dropdown-wrapper">
+    <!-- <div *ngIf="cruise && guest">
+        <label>Добави екскурзия:</label>
         <select [(ngModel)]="selectedExcursionId">
-            <option value="" disabled selected>Избери екскурзия</option>
-            <option *ngFor="let ex of cruise?.excursions" [disabled]="isExcursionAlreadyAdded(ex._id!)" [value]="ex._id">
+            <option [value]="''" disabled>Избери екскурзия</option>
+            <option *ngFor="let ex of cruise?.excursions"
+                [disabled]="ex._id ? isGuestAlreadyAddedToExcursion(ex._id) : false" [value]="ex._id">
                 {{ ex.name }}
             </option>
         </select>
         <button (click)="addExcursionToGuest()" [disabled]="!selectedExcursionId">Добави</button>
-    </div>
+    </div> -->
 </div>

@@ -6,12 +6,13 @@ import { Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { GuestService } from '../services/guest.service';
 import { Guest } from '../types/guests';
+import { ExcursionListComponent } from './excursion/excursion-list.component';
 
 @Component({
   providers: [CruiseService],
   selector: 'app-cruises',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,ExcursionListComponent],
   templateUrl: './cruise.component.html',
   styleUrl: './cruise.component.css'
 })

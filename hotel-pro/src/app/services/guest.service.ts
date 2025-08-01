@@ -36,10 +36,9 @@ export class GuestService {
         return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
     }
 
-    addExcursionToGuest(guestId: string, excursionId: string, excursionName: string): Observable<Guest> {
-        return this.http.patch<Guest>(`${this.apiUrl}/${guestId}/excursions`, { excursionId, excursionName });
+    addExcursionToGuest(guestId: string, excursion: { _id: string, name: string }) {
+        return this.http.patch<Guest>(`${this.apiUrl}/${guestId}/excursions`, excursion);
     }
-
     // Премахни екскурзия от гост
     removeExcursionFromGuest(guestId: string, excursionId: string): Observable<Guest> {
         return this.http.delete<Guest>(`${this.apiUrl}/${guestId}/excursions/${excursionId}`);

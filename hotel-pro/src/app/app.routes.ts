@@ -11,6 +11,7 @@ import { GuestComponent } from './guest/guest.component';
 import { GuestAddComponent } from './guest/create-guest/guest-add.component';
 import { GuestEditComponent } from './guest/edit-guest/guest-edit.component';
 import { GuestDetailsComponent } from './guest-details.component/guest-details.component';
+import { ExcursionListComponent } from './cruise/excursion/excursion-list.component';
 // import { AuthGuard } from './app/guards/auth.guard';
 // import { AdminGuard } from './app/guards/admin.guard';
 
@@ -18,6 +19,8 @@ export const routes: Routes = [
   { path: '', component: DashboardComponent },
   { path: 'cruise', component: CruisesComponent },
   {   path: 'cruise/:id', component: CruisesComponent },
+  // excursion list for chosen cruise
+  { path: 'cruises/:id/excursions', component: ExcursionListComponent },
 
   //Guest-actions
   { path: 'guest', component: GuestComponent },

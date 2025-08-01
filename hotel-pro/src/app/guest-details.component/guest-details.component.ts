@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './guest-details.component.html',
   styleUrls: ['./guest-details.component.css'],
   standalone: true,
-  imports: [FormsModule,CommonModule]
+  imports: [FormsModule, CommonModule]
 })
 export class GuestDetailsComponent implements OnInit {
   guest: Guest | null = null;
@@ -25,7 +25,7 @@ export class GuestDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private guestService: GuestService,
     private cruiseService: CruiseService
-  ) {}
+  ) { }
 
   ngOnInit() {
     const guestId = this.route.snapshot.paramMap.get('id');
@@ -46,15 +46,17 @@ export class GuestDetailsComponent implements OnInit {
 
   addExcursionToGuest() {
     if (!this.guest || !this.selectedExcursionId) return;
+    // Намираш екскурзията по id от масива excursions на круиза
     const ex = this.cruise?.excursions.find(e => e._id === this.selectedExcursionId);
-    if (!ex) return;
-    this.guestService.addExcursionToGuest(this.guest._id!, ex._id!, ex.name).subscribe(updatedGuest => {
-      this.guest = updatedGuest;
-      this.selectedExcursionId = '';
-      this.showDropdown = false;
-    });
+    if (!ex || !ex._id || !this.guest._id) return;
+    this.guestService.addExcursionToGuest(this.guest._id, { _id: ex._id, name: ex.name })
+      .subscribe(updatedGuest => {
+        this.guest = updatedGuest;
+        this.selectedExcursionId = '';
+      });
+      console.log(this.guest);
+      
   }
-
   removeExcursionFromGuest(excursionId: string) {
     if (!this.guest || !this.guest._id) return;
     this.guestService.removeExcursionFromGuest(this.guest._id, excursionId).subscribe(updatedGuest => {
@@ -62,7 +64,7 @@ export class GuestDetailsComponent implements OnInit {
     });
   }
 
-  isExcursionAlreadyAdded(exId: string): boolean {
-  return !!this.guest?.excursions.find(gex => gex._id === exId);
-}
+  isGuestAlreadyAddedToExcursion(exId: string): boolean {
+    return !!this.guest?.excursions.some(gex => gex._id === exId);
+  }
 }
