@@ -35,10 +35,12 @@ export class GuestService {
     deleteGuest(id: string): Observable<{ message: string }> {
         return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
     }
-
     addExcursionToGuest(guestId: string, excursion: { _id: string, name: string }) {
         return this.http.patch<Guest>(`${this.apiUrl}/${guestId}/excursions`, excursion);
     }
+    // addExcursionToGuest(guestId: string, excursion: { _id: string, name: string }) {
+    //     return this.http.patch<Guest>(`${this.apiUrl}/${guestId}/excursions`, excursion);
+    // }
     // Премахни екскурзия от гост
     removeExcursionFromGuest(guestId: string, excursionId: string): Observable<Guest> {
         return this.http.delete<Guest>(`${this.apiUrl}/${guestId}/excursions/${excursionId}`);

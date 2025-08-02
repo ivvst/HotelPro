@@ -46,25 +46,25 @@ export class GuestDetailsComponent implements OnInit {
 
   addExcursionToGuest() {
     if (!this.guest || !this.selectedExcursionId) return;
-    // Намираш екскурзията по id от масива excursions на круиза
     const ex = this.cruise?.excursions.find(e => e._id === this.selectedExcursionId);
     if (!ex || !ex._id || !this.guest._id) return;
     this.guestService.addExcursionToGuest(this.guest._id, { _id: ex._id, name: ex.name })
       .subscribe(updatedGuest => {
+        console.log('ОТГОВОР ОТ БЕКЕНДА:', updatedGuest);
         this.guest = updatedGuest;
         this.selectedExcursionId = '';
       });
-      console.log(this.guest);
-      
+
   }
+
   removeExcursionFromGuest(excursionId: string) {
     if (!this.guest || !this.guest._id) return;
     this.guestService.removeExcursionFromGuest(this.guest._id, excursionId).subscribe(updatedGuest => {
       this.guest = updatedGuest;
     });
   }
-
-  isGuestAlreadyAddedToExcursion(exId: string): boolean {
-    return !!this.guest?.excursions.some(gex => gex._id === exId);
+  isGuestAlreadyAddedToExcursion(guest: Guest, exId: string | undefined): boolean {
+    if (!exId || !guest || !Array.isArray(guest.excursions)) return false;
+    return guest.excursions.some(gex => gex && gex._id === exId);
   }
 }

@@ -10,8 +10,13 @@ const guestSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   stayFrom: { type: String, required: true },
   stayTo: { type: String, required: true },
- cruiseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Cruise', required: true },
-  excursions: { type: [String], default: [] },
+  cruiseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Cruise', required: true },
+  excursions: [
+    {
+      _id: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Excursion' },
+      name: { type: String, required: true }
+    }
+  ],
   isVIP: { type: Boolean, default: false },
   vipServices: { type: [String], default: [] },
   isRhc: { type: Boolean, default: false },

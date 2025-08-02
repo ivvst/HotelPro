@@ -69,23 +69,29 @@ router.delete('/:id', async (req, res) => {
 });
 
 //Extend for Excursions
-// PATCH /api/guests/:guestId/excursions
 router.patch('/:guestId/excursions', async (req, res) => {
   try {
-    const { excursionId } = req.body;
+    const { _id, name } = req.body;
+    if (!_id || !name) return res.status(400).json({ error: 'Missing excursion _id or name' });
+
     const guest = await Guest.findById(req.params.guestId);
     if (!guest) return res.status(404).json({ error: 'Guest not found' });
 
-    if (!guest.excursions.includes(excursionId)) {
-      guest.excursions.push(excursionId);
+    // Проверка да не добавя екскурзията два пъти
+    const alreadyExists = guest.excursions.some(ex => ex && ex._id && ex._id.toString() === _id);
+    if (!alreadyExists) {
+      guest.excursions.push({ _id, name });
+      // Филтриране на невалидни (ако има случайно)
+      guest.excursions = guest.excursions.filter(ex => ex && ex._id);
       await guest.save();
     }
-
     res.json(guest);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
+
+
 // DELETE /api/guests/:guestId/excursions/:excursionId
 router.delete('/:guestId/excursions/:excursionId', async (req, res) => {
   try {
@@ -114,3 +120,21 @@ router.delete('/:guestId/excursions/:excursionId', async (req, res) => {
 
 
 module.exports = router;
+
+// router.patch('/:guestId/excursions', async (req, res) => {
+//   try {
+//     const { excursionId } = req.body;
+//     const guest = await Guest.findById(req.params.guestId);
+//     if (!guest) return res.status(404).json({ error: 'Guest not found' });
+
+//     console.log('I am here')
+//     if (!guest.excursions.includes(excursionId,excursionName)) {
+//       guest.excursions.push(guest.excursions.push({ _id, name }));
+//       await guest.save();
+//     }
+
+//     res.json(guest);
+//   } catch (err) {
+//     res.status(400).json({ error: err.message });
+//   }
+// });
