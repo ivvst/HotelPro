@@ -1,5 +1,11 @@
+console.log('LOADING CRUISES ROUTER!');
 const router = require('express').Router();
 const Cruise = require('../models/cruise');
+const auth = require('../middlewares/auth')
+const isAdmin = require('../middlewares/isAdmin').default; // и този ред, ако го нямаш
+
+console.log('auth:', typeof auth);      // трябва да изпише "function"
+console.log('isAdmin:', typeof isAdmin); // трябва да изпише "function"
 
 router.get('/', async (req, res) => {
   try {
@@ -19,7 +25,7 @@ router.get('/:id', async (req, res) => {
 
 
 
-router.post('/', async (req, res) => {
+router.post('/', auth, isAdmin, async (req, res) => {
   try {
     const { name, startDate, endDate } = req.body;
     const cruise = new Cruise({ name, startDate, endDate });
@@ -102,6 +108,44 @@ router.delete('/:id/excursions/:exId', async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
+});
+
+router.patch('/:cruiseId/excursions/:excursionId/request-delete', async (req, res) => {
+  console.log('What is the request');
+
+  const { cruiseId, excursionId } = req.params;
+  const cruise = await Cruise.findById(cruiseId);
+  if (!cruise) return res.status(404).json({ error: 'Cruise not found' });
+
+  const excursion = cruise.excursions.id(excursionId);
+  if (!excursion) return res.status(404).json({ error: 'Excursion not found' });
+
+  excursion.deleteRequested = true;
+  await cruise.save();
+
+  res.json({ message: 'Заявката е отбелязана. Очаква одобрение от администратор.' });
+});
+
+router.patch('/:cruiseId/excursions/:excursionId/reject-delete', auth, isAdmin, async (req, res) => {
+
+  console.log('--- Заявка за reject-delete ---');
+  console.log('req.user:', req.user);
+  console.log('params:', req.params);
+  console.log('headers:', req.headers);
+  // Ако искаш виж и cookie:
+  console.log('cookies:', req.cookies);
+
+  const { cruiseId, excursionId } = req.params;
+  const cruise = await Cruise.findById(cruiseId);
+  if (!cruise) return res.status(404).json({ error: 'Cruise not found' });
+
+  const excursion = cruise.excursions.id(excursionId);
+  if (!excursion) return res.status(404).json({ error: 'Excursion not found' });
+
+  excursion.deleteRequested = false;
+  await cruise.save();
+
+  res.json({ message: 'Заявката за изтриване е отказана.' });
 });
 
 

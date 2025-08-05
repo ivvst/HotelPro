@@ -1,9 +1,8 @@
-import { Component, inject, Signal, signal, computed } from '@angular/core';
+import { Component, signal, computed, OnInit } from '@angular/core';
 import { CruiseService } from '../services/cruise.service';
 import { Cruise } from '../types/cruise';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { GuestService } from '../services/guest.service';
 import { Guest } from '../types/guests';
 import { ExcursionListComponent } from './excursion/excursion-list.component';
@@ -12,14 +11,14 @@ import { ExcursionListComponent } from './excursion/excursion-list.component';
   providers: [CruiseService],
   selector: 'app-cruises',
   standalone: true,
-  imports: [CommonModule,ExcursionListComponent],
+  imports: [CommonModule, ExcursionListComponent],
   templateUrl: './cruise.component.html',
   styleUrl: './cruise.component.css'
 })
-export class CruisesComponent {
+export class CruisesComponent implements OnInit {
 
-  cruises: Signal<Cruise[]> = toSignal(inject(CruiseService).getAllCruises(), { initialValue: [] });
-  guests: Signal<Guest[]> = toSignal(inject(GuestService).getAllGuests(), { initialValue: [] });
+  cruises = signal<Cruise[]>([]);   // WritableSignal
+  guests = signal<Guest[]>([]);     // WritableSignal
 
   guestsView = signal(false);
   detailsView = signal(false);
@@ -29,8 +28,16 @@ export class CruisesComponent {
 
   constructor(
     private cruiseService: CruiseService,
+    private guestService: GuestService,
     private router: Router
   ) { }
+
+  ngOnInit() {
+    // 🔄 Зареждане на началните данни
+    this.cruiseService.getAllCruises().subscribe(c => this.cruises.set(c));
+    this.guestService.getAllGuests().subscribe(g => this.guests.set(g));
+  }
+
   // Pagination
   page = signal(1);
   pageSize = 10;
@@ -88,6 +95,9 @@ export class CruisesComponent {
     this.guestsView.set(false);
     this.detailsView.set(false);
     this.selectedCruise.set(null);
+
+    // 🔄 Презареждане на круизите при връщане назад
+    this.cruiseService.getAllCruises().subscribe(c => this.cruises.set(c));
   }
 
   addCruise() {

@@ -6,7 +6,8 @@ const excursionSchema = new mongoose.Schema({
   description: String,
   date: { type: String, required: true },      // напр. '2025-09-05'
   fromTime: { type: String, required: true },  // напр. '10:00'
-  toTime: { type: String, required: true }     // напр. '14:00'
+  toTime: { type: String, required: true },   // напр. '14:00'
+  deleteRequested: { type: Boolean, default: false }
 });
 
 // Схема за круиз:

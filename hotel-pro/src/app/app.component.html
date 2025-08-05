@@ -87,6 +87,7 @@
             <li><a routerLink="/carousel">Carousel</a></li>
             <li><a routerLink="/closebutton">Close Button</a></li>
             <li><a routerLink="/collapse">Collapse</a></li>
+           <li><a routerLink="/admin-users">Всички потребители</a></li> 
           </ul>
         </li>
       </ul>
@@ -115,7 +116,13 @@
             <span class="status-indicator"></span>
 
             <ul class="user-dropdown">
-              <li><a routerLink="/profile">Профил</a></li>
+              <script>
+                function getProfileInfo() {
+                  console.log('Бутонът работи!');
+                  // Тук сложи fetch/axios заявката си
+                }
+              </script>
+              <button (click)="loadProfile()">Вземи профил</button>
               <li (click)="logout()">Изход</li>
             </ul>
           </div>

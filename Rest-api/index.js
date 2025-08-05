@@ -2,17 +2,22 @@ require('dotenv').config(); // ❗ ЗАДЪЛЖИТЕЛНО първо
 
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const dbConnector = require('./config/db');
 const config = require('./config/config');
 const apiRouter = require('./router');
-const usersRouter = require('./router/users'); // 🔄 auth + profile логика
+const usersRouter = require('./router/users');
 const { errorHandler } = require('./utils');
 
 dbConnector()
   .then(() => {
     const app = express();
 
-    require('./config/express')(app); // ако имаш такъв файл
+    // ако имаш ./config/express, остави го тук:
+    if (typeof require('./config/express') === 'function') {
+      require('./config/express')(app);
+    }
+    app.use(cookieParser()); // <--- ЗАДЪЛЖИТЕЛНО ЗА JWT от cookie
 
     app.use(cors({
       origin: config.origin,
@@ -20,16 +25,11 @@ dbConnector()
     }));
 
     app.use(express.json());
-    
-    app.use('/api/users',usersRouter);
 
-    // 🔐 Регистрация, вход, профил
+    // Първо user, после другите
     app.use('/api/users', usersRouter);
-
-    // 👇 ако имаш други неща под /api
     app.use('/api', apiRouter);
 
-    // 🧯 Глобален error handler
     app.use(errorHandler);
 
     app.listen(config.port, () => {

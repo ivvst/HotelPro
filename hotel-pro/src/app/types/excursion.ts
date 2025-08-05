@@ -5,4 +5,5 @@ export interface Excursion {
   date: string;
   fromTime: string;
   toTime: string;
+  deleteRequested?: boolean;
 }

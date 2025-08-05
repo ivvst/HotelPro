@@ -34,21 +34,19 @@ export class AppComponent {
   goToRoom() {
     this.router.navigate(['/room'], { fragment: 'table' });
   }
-  ngOnInit(): void {
-    const storedUser = sessionStorage.getItem(this.userService.KEY);
-
-    if (!storedUser) {
-      // Ако няма съхранен потребител, проверяваме от бекенда дали има активна сесия
-      this.userService.getProfile().subscribe({
-        next: (user) => {
-          this.userService.setUser(user); // ако има – сетваме
-        },
-        error: () => {
-          this.userService.clearUser(); // ако няма – чистим
-        }
-      });
+ loadProfile(): void {
+  this.userService.getProfileInfo().subscribe({
+    next: (user) => {
+      console.log('Profile:', user);
+      this.userService.setUser(user); // ако искаш да пазиш потребителя
+    },
+    error: (err) => {
+      console.error('Грешка при взимане на профил:', err);
+      this.userService.clearUser();
     }
-  }
+  });
+}
+
   sidebarVisible = true;
   toggleSidebar() {
     this.sidebarVisible = !this.sidebarVisible;

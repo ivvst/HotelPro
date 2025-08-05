@@ -1,16 +1,40 @@
-<div class="card">
-  <form #f="ngForm" (ngSubmit)="onSubmit(f)" class="general">
-    <h1>Добави круиз</h1>
+<div class="cruise-form-container">
+  <h2>Добави нов круиз</h2>
 
-    <label>Име на круиз</label>
-    <input name="name" [(ngModel)]="cruise.name" required />
+  <form (ngSubmit)="submit()" class="cruise-form" #cruiseForm="ngForm">
+    <label for="name">Име на круиза</label>
+    <input
+      type="text"
+      id="name"
+      name="name"
+      [(ngModel)]="cruiseData.name"
+      required
+      placeholder="Въведи име..."
+    />
 
-    <label>Начална дата</label>
-    <input name="startDate" [(ngModel)]="cruise.startDate" type="date" required />
+    <label for="startDate">Начална дата</label>
+    <input
+      type="date"
+      id="startDate"
+      name="startDate"
+      [(ngModel)]="cruiseData.startDate"
+      required
+    />
 
-    <label>Крайна дата</label>
-    <input name="endDate" [(ngModel)]="cruise.endDate" type="date" required />
+    <label for="endDate">Крайна дата</label>
+    <input
+      type="date"
+      id="endDate"
+      name="endDate"
+      [(ngModel)]="cruiseData.endDate"
+      required
+    />
 
-    <button type="submit" [disabled]="f.invalid" class="add-btn">Добави круиз</button>
+    <button type="submit" [disabled]="!cruiseForm.form.valid">
+      📦 Добави круиз
+    </button>
   </form>
+
+  <p *ngIf="successMsg" class="success">{{ successMsg }}</p>
+  <p *ngIf="errorMsg" class="error">{{ errorMsg }}</p>
 </div>

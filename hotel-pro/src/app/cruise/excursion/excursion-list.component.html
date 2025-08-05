@@ -1,39 +1,17 @@
 <div class="exc-list-wrapper">
   <h3>Екскурзии към круиза</h3>
 
-  <form (ngSubmit)="submit()" #exForm="ngForm" class="ex-form">
-    <input
-      type="text"
-      [(ngModel)]="formData.name"
-      name="name"
-      required
-      placeholder="Име на екскурзия"
-    />
-    <input
-      type="date"
-      [(ngModel)]="formData.date"
-      name="date"
-      required
-      placeholder="Дата"
-    />
-    <input
-      type="time"
-      [(ngModel)]="formData.fromTime"
-      name="fromTime"
-      required
-      placeholder="От час"
-    />
-    <input
-      type="time"
-      [(ngModel)]="formData.toTime"
-      name="toTime"
-      required
-      placeholder="До час"
-    />
-    <textarea
-      [(ngModel)]="formData.description"
-      name="description"
-      placeholder="Описание (незадължително)">
+  <!-- Съобщения -->
+  <div *ngIf="successMsg" class="success">{{ successMsg }}</div>
+  <div *ngIf="errorMsg" class="error">{{ errorMsg }}</div>
+
+  <!-- Форма за добавяне/редакция: видима само за админ -->
+  <form *ngIf="isAdmin" (ngSubmit)="submit()" #exForm="ngForm" class="ex-form">
+    <input type="text" [(ngModel)]="formData.name" name="name" required placeholder="Име на екскурзия" />
+    <input type="date" [(ngModel)]="formData.date" name="date" required placeholder="Дата" />
+    <input type="time" [(ngModel)]="formData.fromTime" name="fromTime" required placeholder="От час" />
+    <input type="time" [(ngModel)]="formData.toTime" name="toTime" required placeholder="До час" />
+    <textarea [(ngModel)]="formData.description" name="description" placeholder="Описание (незадължително)">
     </textarea>
     <button type="submit" [disabled]="exForm.invalid">
       {{ editExcursion ? 'Запази' : 'Добави' }}
@@ -57,14 +35,29 @@
     </thead>
     <tbody>
       <tr *ngFor="let ex of excursions">
-        <td>{{ ex.name }}</td>
-        <td>{{ ex.date }}</td>
-        <td>{{ ex.fromTime }}</td>
-        <td>{{ ex.toTime }}</td>
-        <td>{{ ex.description }}</td>
         <td>
-          <button (click)="startEdit(ex)">Редактирай</button>
-          <button (click)="deleteExcursion(ex._id!)">Изтрий</button>
+          {{ ex.name }}
+          <span *ngIf="ex.deleteRequested" class="flag-delete" title="Маркирана за изтриване">⛔</span>
+        </td>
+        <td>{{ ex.date ? (ex.date | date:'dd/MM/yyyy') : '-' }}</td>
+        <td>{{ ex.fromTime || '-' }}</td>
+        <td>{{ ex.fromTime || '-' }}</td>
+        <td>{{ (ex.description || '-') | shorten:50 }}</td>
+        <td>
+          <button *ngIf="isAdmin" (click)="startEdit(ex)">Редактирай</button>
+          <!-- Само админ може да трие -->
+          <button *ngIf="isAdmin" (click)="deleteExcursion(ex._id!)">Изтрий</button>
+          <button *ngIf="ex.deleteRequested && isAdmin" (click)="rejectDelete(ex._id)">
+            Откажи изтриване
+          </button>
+
+          <!-- За НЕ-админ: може само да поиска изтриване ако не е маркирано -->
+          <button *ngIf="!isAdmin && !ex.deleteRequested" (click)="requestDelete(ex._id)">
+            Маркирай за изтриване
+          </button>
+
+          <!-- Ако не е админ и е маркирано -->
+          <span *ngIf="!isAdmin && ex.deleteRequested" class="flag-delete-text">Изчаква одобрение</span>
         </td>
       </tr>
     </tbody>

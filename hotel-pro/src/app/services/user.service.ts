@@ -8,14 +8,14 @@ import { environment } from '../environments/environment';
   providedIn: 'root',
 })
 export class UserService implements OnDestroy {
-  private user$$ = new BehaviorSubject<UserForAuth | undefined>(undefined);
+  private readonly KEY = '[auth]';
+  private readonly apiUrl = environment.apiUrl;
+
+  private user$$ = new BehaviorSubject<UserForAuth | null>(null);
   user$ = this.user$$.asObservable();
 
-  public user: UserForAuth | undefined;
-  private userSubscription: Subscription | null = null;
-
-  readonly KEY = '[auth]';
-  private readonly apiUrl = environment.apiUrl;
+  private userSubscription: Subscription;
+  public user: UserForAuth | null = null;
 
   constructor(private http: HttpClient) {
     this.restoreSession();
@@ -25,37 +25,54 @@ export class UserService implements OnDestroy {
     });
   }
 
-  /** Getter за проверка дали има логнат потребител */
+  /** Getter: има ли логнат потребител */
   get isLogged(): boolean {
     return !!this.user;
+  }
+
+  /** Getter: ролята на текущия потребител */
+  get role(): string | undefined {
+    return this.user?.role;
+  }
+
+  /** Проверка: дали е админ */
+  get isAdmin(): boolean {
+    return this.role === 'admin';
   }
 
   /** Зарежда потребител от sessionStorage */
   restoreSession() {
     const storedUser = sessionStorage.getItem(this.KEY);
     if (storedUser) {
-      const user = JSON.parse(storedUser);
-      this.setUser(user);
+      try {
+        const user: UserForAuth = JSON.parse(storedUser);
+        this.setUser(user);
+      } catch {
+        this.clearUser();
+      }
     }
   }
 
   /** Централизирано сетване на потребител */
-  setUser(user: UserForAuth) {
+  setUser(user: UserForAuth | null) {
     this.user$$.next(user);
-    sessionStorage.setItem(this.KEY, JSON.stringify(user));
+    if (user) {
+      sessionStorage.setItem(this.KEY, JSON.stringify(user));
+    } else {
+      sessionStorage.removeItem(this.KEY);
+    }
   }
 
   /** Централизирано изчистване на потребител */
   clearUser() {
-    this.user$$.next(undefined);
-    sessionStorage.removeItem(this.KEY);
+    this.setUser(null);
   }
 
   /** Регистрация */
-  register(username: string, email: string, password: string, rePassword: string, fullName: string) {
+  register(username: string, email: string, password: string, repeatPassword: string, fullName: string) {
     return this.http.post<UserForAuth>(
       `${this.apiUrl}/register`,
-      { username, email, password, rePassword, fullName },
+      { username, email, password, repeatPassword, fullName },
       { withCredentials: true }
     ).pipe(
       tap((user) => this.setUser(user))
@@ -80,8 +97,8 @@ export class UserService implements OnDestroy {
     );
   }
 
-  /** Вземане на профил от бекенда */
-  getProfile() {
+  /** Вземане на профил */
+  getProfileInfo() {
     return this.http.get<UserForAuth>(
       `${this.apiUrl}/users/profile`,
       { withCredentials: true }
@@ -90,7 +107,7 @@ export class UserService implements OnDestroy {
     );
   }
 
-  /** Обновяване на потребителски данни */
+  /** Обновяване на профил */
   updateProfile(username: string, email: string) {
     return this.http.put<UserForAuth>(
       `${this.apiUrl}/users/profile`,
@@ -101,7 +118,7 @@ export class UserService implements OnDestroy {
     );
   }
 
-  /** Изчистване на Subscription */
+  /** Премахване на Subscription */
   ngOnDestroy(): void {
     this.userSubscription?.unsubscribe();
   }

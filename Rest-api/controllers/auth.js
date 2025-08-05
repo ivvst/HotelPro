@@ -20,7 +20,7 @@ function register(req, res, next) {
             createdUser = bsonToJson(createdUser);
             createdUser = removePassword(createdUser);
 
-            const token = utils.jwt.createToken({ id: createdUser._id });
+            const token = utils.jwt.createToken({ _id: createdUser._id });
             if (process.env.NODE_ENV === 'production') {
                 res.cookie(authCookieName, token, { httpOnly: true, sameSite: 'none', secure: true })
             } else {
@@ -44,6 +44,7 @@ function register(req, res, next) {
 }
 
 function login(req, res, next) {
+    console.log('LOGIN КОНТРОЛЕР СЕ ИЗВИКВА!');
     const { email, password } = req.body;
 
     userModel.findOne({ email })
@@ -59,7 +60,9 @@ function login(req, res, next) {
             user = bsonToJson(user);
             user = removePassword(user);
 
-            const token = utils.jwt.createToken({ id: user._id });
+            // ---- ПРОМЕНИ ТУК:
+            console.log('LOGIN user:', user);  // <-- да видиш user-а!
+            const token = utils.jwt.createToken({ _id: user._id, email: user.email, role: user.role }); // <-- ДОБАВИ role!
 
             if (process.env.NODE_ENV === 'production') {
                 res.cookie(authCookieName, token, { httpOnly: true, sameSite: 'none', secure: true })
