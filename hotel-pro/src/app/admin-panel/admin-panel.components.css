@@ -1,0 +1,26 @@
+.users-container {
+  background-color: #f9f9f9;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.users-container h2 {
+  margin-bottom: 1rem;
+}
+
+.users-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.users-container li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.unauthorized {
+  color: red;
+  font-weight: bold;
+  padding: 1rem;
+}

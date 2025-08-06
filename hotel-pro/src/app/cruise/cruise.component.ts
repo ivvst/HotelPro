@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { GuestService } from '../services/guest.service';
 import { Guest } from '../types/guests';
 import { ExcursionListComponent } from './excursion/excursion-list.component';
+import { LoaderService } from '../services/loaded.service';
 
 @Component({
   providers: [CruiseService],
@@ -29,13 +30,26 @@ export class CruisesComponent implements OnInit {
   constructor(
     private cruiseService: CruiseService,
     private guestService: GuestService,
-    private router: Router
+    private router: Router,
+    public loader: LoaderService
   ) { }
 
   ngOnInit() {
-    // 🔄 Зареждане на началните данни
-    this.cruiseService.getAllCruises().subscribe(c => this.cruises.set(c));
-    this.guestService.getAllGuests().subscribe(g => this.guests.set(g));
+    this.loader.show(); // ⏳ Покажи loader преди заявките
+
+    // Зареждане на круизи
+    this.cruiseService.getAllCruises().subscribe({
+      next: (c) => this.cruises.set(c),
+      error: (err) => console.error(err),
+      complete: () => this.loader.hide() // ✅ Скрий след завършване
+    });
+
+    // Зареждане на гости
+    this.guestService.getAllGuests().subscribe({
+      next: (g) => this.guests.set(g),
+      error: (err) => console.error(err)
+      // 👈 Тук няма loader.hide(), защото вече го извикахме отгоре
+    });
   }
 
   // Pagination

@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Subscription, tap } from 'rxjs';
-import { UserForAuth } from '../types/user';
+import { BehaviorSubject, Observable, Subscription, tap } from 'rxjs';
+import { User, UserForAuth } from '../types/user';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -96,7 +96,12 @@ export class UserService implements OnDestroy {
       tap(() => this.clearUser())
     );
   }
-
+  //Показване на всички потребители 
+  getAllUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/users`, {
+      withCredentials: true
+    });
+  }
   /** Вземане на профил */
   getProfileInfo() {
     return this.http.get<UserForAuth>(

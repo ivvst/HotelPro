@@ -1,1 +1,20 @@
-<p>admin-panel works!</p>
+<div *ngIf="isLoading">
+  ⏳ Зареждане на потребители...
+</div>
+
+<div *ngIf="isForbidden && !isLoading" class="unauthorized">
+  ⛔ Нямате достъп до тази страница.
+</div>
+
+<div *ngIf="!isForbidden && !isLoading" class="users-container">
+  <h2>👥 Списък с потребители</h2>
+  <ul *ngIf="users.length > 0; else noUsers">
+    <li *ngFor="let user of users">
+      {{ user.email }} — <strong>{{ user.role }}</strong>
+    </li>
+  </ul>
+
+  <ng-template #noUsers>
+    <p>❗ Няма намерени потребители.</p>
+  </ng-template>
+</div>

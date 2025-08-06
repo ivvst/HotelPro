@@ -7,11 +7,15 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 
 // Импорт на AuthInterceptor
 import { AuthInterceptor } from './app/interceptors/auth.interceptor';
+import { ErrorInterceptor } from './app/interceptors/error.interceptor';
+import { LoaderInterceptor } from './app/interceptors/loader.interceptor';
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
-    provideHttpClient(withInterceptors([AuthInterceptor])),
+    provideHttpClient(
+      withInterceptors([AuthInterceptor, ErrorInterceptor, LoaderInterceptor])
+    ),
     provideAnimations()
   ],
 });

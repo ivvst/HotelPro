@@ -8,7 +8,7 @@ export interface User {
   posts?: string[];
 }
 export interface UserForAuth {
-  id: string;
+  _id: string;
   username: string;
   email: string;
   token?: string; // ако използваш JWT

@@ -1,55 +1,28 @@
-// import { Observable } from "rxjs";
-// import { UserForAuth } from "../types/user";
-// import { HttpClient } from "@angular/common/http";
-// import { environment } from '../environments/environment';
+import { Injectable } from '@angular/core';
 
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthService {
+  getToken(): string | null {
+    const match = document.cookie.match(/(?:^|;\s*)token=([^;]+)/);
+    return match ? match[1] : null;
+  }
 
-// export class AuthService {
+  getUserRole(): 'admin' | 'user' | null {
+    const token = this.getToken();
+    console.log(token);
+    
+    if (!token) return null;
 
-
-//   constructor(private http: HttpClient) {}
-
-//   // Логин
-//   login(credentials: { email: string; password: string }): Observable<{ user: UserForAuth }> {
-//     return this.http.post<{ user: UserForAuth }>(`${this.apiUrl}/login`, credentials);
-//   }
-
-//   // Регистрация
-//   register(data: {
-//     email: string;
-//     password: string;
-//     repeatPassword: string;
-//     username: string;
-//     fullName: string;
-//   }): Observable<{ user: UserForAuth }> {
-//     return this.http.post<{ user: UserForAuth }>(`${this.apiUrl}/register`, data);
-//   }
-
-//   // Изход (logout)
-//   logout(): void {
-//     localStorage.removeItem('user');
-//   }
-
-//   getUser(): UserForAuth | null {
-//     const raw = localStorage.getItem('user');
-//     return raw ? JSON.parse(raw) as UserForAuth : null;
-//   }
-
-//   isAdmin(): boolean {
-//     const user = this.getUser();
-//     return user?.role === 'admin';
-//   }
-
-//   isLoggedIn(): boolean {
-//     return !!this.getUser();
-//   }
-
-//   getUserRole(): string | undefined {
-//     const user = this.getUser();
-//     return user?.role;
-//   }
-
-//   setUser(user: UserForAuth): void {
-//     localStorage.setItem('user', JSON.stringify(user));
-//   }
-// }
+    try {
+      const payloadBase64 = token.split('.')[1];
+      const payloadJson = atob(payloadBase64);
+      const payload = JSON.parse(payloadJson);
+      return payload.role || null;
+    } catch (error) {
+      console.error('Грешка при декодиране на токена:', error);
+      return null;
+    }
+  }
+}

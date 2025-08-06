@@ -3,9 +3,14 @@
   <button (click)="addCruise()">Add Cruise</button>
 
   <!-- Ако няма избран круиз: Показваме таблицата -->
+
   <div *ngIf="!selectedCruise()">
+
     <table class="cruise-table">
       <thead>
+        <div *ngIf="loader.loading$ | async" class="loading-overlay">
+          <p>Зареждане...</p>
+        </div>
         <tr>
           <th>Cruise</th>
           <th>Excursions</th>
@@ -51,7 +56,7 @@
     <p><b>End Date:</b> {{ selectedCruise()?.endDate }}</p>
     <p><b>Excursions:</b> {{ getExcursionCount(selectedCruise()!) }}</p>
     <p><b>Guests:</b> {{ getGuestCount(selectedCruise()?._id) }} / {{ MAX_GUESTS }}</p>
-   <app-excursion-list [cruiseId]="selectedCruise()!._id"></app-excursion-list>
+    <app-excursion-list [cruiseId]="selectedCruise()!._id"></app-excursion-list>
     <!-- Добави тук каквито други детайли искаш -->
     <button (click)="backToCruises()">Back</button>
   </div>
