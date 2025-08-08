@@ -3,27 +3,19 @@
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
 }
 
-/* Sidebar base */
+/* Sidebar */
 .sidebar {
   width: 240px;
-
-  background: #1f2a40;
-
+  background: linear-gradient(180deg, #1f2a40, #121826);
   color: #fff;
-
-  transition: transform 0.3s cubic-bezier(.86, 0, .07, 1);
-
-  will-change: transform;
-
-  z-index: 100;
-
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
+  z-index: 100;
   overflow-y: hidden;
-  /* always at left edge */
-  transition: transform 0.3s;
-  transform: translateX(0);
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
 }
 
 .sidebar:hover {
@@ -33,50 +25,52 @@
 .sidebar.closed {
   transform: translateX(-100%);
   position: absolute;
-
   left: 0;
-
   top: 0;
-
   height: 100vh;
 }
 
+/* Scrollbar styling */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
 .content {
-
   flex: 1 1 0%;
-
   display: flex;
-
   flex-direction: column;
-
   min-width: 0;
 }
 
+/* Main content */
 .main {
-
   flex: 1 1 auto;
-
   width: 100%;
-
   padding: 0 2vw;
-
-  background: rgb(249, 184, 184);
-  /* твоя син фон */
-
+  background: #f7f8fa;
   min-height: 100vh;
   overflow-y: auto;
-  /* Може да добавиш и това ако съдържанието расте много: */
-  max-height: 100vh;
 }
 
-.container {
-  display: flex;
-}
-
+/* Logo */
 .logo {
-  font-size: 1.5rem;
-  color: white;
-  margin-bottom: 2rem;
+  font-size: 1.6rem;
+  color: #fff;
+  font-weight: bold;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  cursor: pointer;
+}
+.logo:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 /* Navigation */
@@ -87,7 +81,7 @@
 }
 
 .menu-item {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
 .menu-item a,
@@ -99,18 +93,19 @@
   border: none;
   color: inherit;
   font: inherit;
-  padding: 0.5rem 0;
+  padding: 0.65rem 1rem;
   text-align: left;
   cursor: pointer;
   border-radius: 4px;
-  transition: background 0.2s;
+  transition: background 0.25s ease, transform 0.15s ease;
 }
 
 .menu-item a:hover,
 .menu-item button.submenu-toggle:hover,
 .menu-item.active a {
-  background: #283347;
-  color: white;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  transform: translateX(3px);
 }
 
 /* Icons */
@@ -126,11 +121,7 @@
   width: 16px;
   height: 16px;
   fill: currentColor;
-  transition: transform 0.2s;
-}
-
-.has-sub .icon-chevron {
-  transform: rotate(0deg);
+  transition: transform 0.2s ease;
 }
 
 .has-sub.open .icon-chevron {
@@ -139,26 +130,33 @@
 
 /* Section titles */
 .section-title {
-  margin: 1.5rem 0 0.75rem;
+  margin: 1rem 0 0.5rem 1rem;
   font-size: 0.75rem;
-  color: #475569;
+  color: rgba(255, 255, 255, 0.6);
   letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
-/* Sub-menus */
+/* Sub-menus - animated open/close */
 .sub-menu {
   list-style: none;
-  padding-left: 1.5rem;
-  margin: 0.5rem 0;
-  display: none;
+  padding-left: 2rem;
+  margin: 0;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: max-height 0.3s ease, opacity 0.25s ease;
 }
 
 .has-sub.open .sub-menu {
-  display: block;
+  max-height: 500px; /* достатъчно голямо за всички елементи */
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .sub-menu li {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
 .sub-menu.long {
@@ -166,30 +164,25 @@
   overflow-y: auto;
 }
 
-/* Scrollbar for long sub-menu */
 .sub-menu.long::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
-
 .sub-menu.long::-webkit-scrollbar-thumb {
-  background: #475569;
-  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
 }
 
+/* Topbar */
 .topbar {
-  width: 100%;
-  background: linear-gradient(90deg, #6b46c1 0%, #805ad5 100%);
-  margin: 0;
-  padding: 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(90deg, #6b46c1, #805ad5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .top-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem 1rem;
-  background: linear-gradient(90deg, #6b46c1 0%, #805ad5 100%);
+  padding: 0.6rem 1rem;
 }
 
 .btn-hamburger {
@@ -200,27 +193,15 @@
   flex-direction: column;
   gap: 5px;
   padding: 6px;
-  justify-content: center;
-  align-items: center;
 }
 
 .hamburger-line {
-  display: block;
-  width: 28px;
+  width: 26px;
   height: 3px;
   background: #fff;
-  /* или друг цвят според topbar-а */
   border-radius: 2px;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
-
-/* (optional) Hide the button if the sidebar is open and on large screens: */
-
-/* @media (min-width: 800px) {
-
-  .btn-hamburger { display: none; }
-
-} */
 
 .nav-center {
   flex: 1;
@@ -230,11 +211,16 @@
 
 .nav-search {
   width: 100%;
-  max-width: 400px;
-  padding: 0.5rem 1rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 1rem;
+  max-width: 380px;
+  padding: 0.4rem 1rem;
+  border: none;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+.nav-search::placeholder {
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .nav-actions {
@@ -247,27 +233,31 @@
   background: white;
   border: none;
   border-radius: 50%;
-  padding: 0.5rem;
-  font-size: 1.25rem;
+  padding: 0.45rem;
+  font-size: 1.1rem;
   cursor: pointer;
+  transition: background 0.25s ease, transform 0.15s ease;
+}
+.btn-notif:hover {
+  background: #eee;
+  transform: scale(1.1);
 }
 
+/* Profile dropdown */
 .nav-profile {
   position: relative;
   cursor: pointer;
 }
-
-
 .profile-img {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
+  border: 2px solid white;
 }
-
 .status-indicator {
   position: absolute;
-  bottom: 0;
-  right: 0;
+  bottom: 2px;
+  right: 2px;
   width: 10px;
   height: 10px;
   background: #48bb78;
@@ -280,20 +270,16 @@
   top: 110%;
   right: 0;
   background: white;
-  border: 1px solid #ccc;
   border-radius: 6px;
   list-style: none;
   padding: 0.5rem 0;
   margin: 0;
-  width: 150px;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-
-  /* Анимация: скрито по подразбиране */
+  width: 160px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
   opacity: 0;
   pointer-events: none;
   transform: translateY(-10px);
-  transition: all 0.25s ease-in-out;
+  transition: all 0.25s ease;
 }
 
 .nav-profile:hover .user-dropdown {
@@ -302,28 +288,11 @@
   transform: translateY(0);
 }
 
-
-.has-sub .sub-menu {
-  display: none;
-}
-
-/* При hover върху родителя – показваме sub-menu */
-.has-sub:hover>.sub-menu {
-  display: block;
-}
-
-/* (По избор) Завъртаме малко chevron при показване */
-.has-sub:hover .icon-chevron {
-  transform: rotate(180deg);
-  transition: transform .2s;
-}
-
 .user-dropdown li {
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1rem;
   cursor: pointer;
   transition: background 0.2s ease;
 }
-
 .user-dropdown li:hover {
   background: #f5f5f5;
 }

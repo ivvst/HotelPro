@@ -1,4 +1,4 @@
-<div class="layout">
+<div class="layout" *ngIf="isLoggedIn(); else dashboardOnly">
   <!-- Sidebar -->
   <aside class="sidebar" [class.closed]="!sidebarVisible">
     <h2 class="logo" [routerLink]="['/']">Hotel UI</h2>
@@ -18,8 +18,8 @@
         <li class="section-title">LAYOUTS & PAGES</li>
 
         <!-- Pages -->
-        <li class="menu-item has-sub">
-          <button class="submenu-toggle">
+        <li class="menu-item has-sub" [class.open]="openMenu === 'pages'">
+          <button class="submenu-toggle" (click)="toggleMenu('pages')">
             <svg class="icon" viewBox="0 0 24 24">
               <path d="M3 7h18M3 12h18M3 17h18" />
             </svg>
@@ -35,8 +35,8 @@
         </li>
 
         <!-- Authentication -->
-        <li class="menu-item has-sub">
-          <button class="submenu-toggle">
+        <li class="menu-item has-sub" [class.open]="openMenu === 'auth'">
+          <button class="submenu-toggle" (click)="toggleMenu('auth')">
             Authentication
             <svg class="icon-chevron" viewBox="0 0 24 24">
               <path d="M6 9l6 6 6-6" />
@@ -65,8 +65,9 @@
         <li class="section-title">UI COMPONENTS</li>
 
         <!-- Components -->
-        <li class="menu-item has-sub">
-          <button class="submenu-toggle">
+        <li class="menu-item has-sub" [class.open]="openMenu === 'pages'">
+          <button class="submenu-toggle" (click)="toggleMenu('pages')" [attr.aria-expanded]="openMenu === 'pages'"
+            aria-controls="submenu-pages">
             <svg class="icon" viewBox="0 0 24 24">
               <path d="M4 4h16v16H4z" />
             </svg>
@@ -75,21 +76,12 @@
               <path d="M6 9l6 6 6-6" />
             </svg>
           </button>
-          <ul class="sub-menu long">
+          <ul class="sub-menu" id="submenu-pages">
             <li><a routerLink="/guest">Accordions</a></li>
-            <li><a routerLink="/alerts">Alerts</a></li>
-            <li><a routerLink="/badges">Badges</a></li>
-            <li><a routerLink="/breadcrumbs">Breadcrumbs</a></li>
-            <li><a routerLink="/buttons">Buttons</a></li>
-            <li><a routerLink="/buttongroup">ButtonGroup</a></li>
-            <li><a routerLink="/cards">Cards</a></li>
-            <li><a routerLink="/carousel">Carousel</a></li>
-            <li><a routerLink="/closebutton">Close Button</a></li>
-            <li><a routerLink="/collapse">Collapse</a></li>
 
-            <!-- 🔥 Показва се само за Admin -->
             <li *ngIf="userService.user?.role === 'admin'">
               <a routerLink="/users">Всички потребители</a>
+              <a routerLink="/admin-dashboard">Statistic</a>
             </li>
           </ul>
         </li>
@@ -127,8 +119,11 @@
       </nav>
     </header>
     <main class="main">
-      
       <router-outlet></router-outlet>
     </main>
   </div>
 </div>
+
+<ng-template #dashboardOnly>
+  <router-outlet></router-outlet>
+</ng-template>

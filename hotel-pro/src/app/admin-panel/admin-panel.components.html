@@ -1,20 +1,78 @@
-<div *ngIf="isLoading">
-  ⏳ Зареждане на потребители...
+<div *ngIf="isLoading" class="loader fade-in">
+  <span class="spinner"></span> Зареждане на потребители...
 </div>
 
-<div *ngIf="isForbidden && !isLoading" class="unauthorized">
+<div *ngIf="isForbidden && !isLoading" class="unauthorized fade-in">
   ⛔ Нямате достъп до тази страница.
 </div>
 
-<div *ngIf="!isForbidden && !isLoading" class="users-container">
+<div *ngIf="!isForbidden && !isLoading" class="users-container fade-in">
   <h2>👥 Списък с потребители</h2>
-  <ul *ngIf="users.length > 0; else noUsers">
-    <li *ngFor="let user of users">
-      {{ user.email }} — <strong>{{ user.role }}</strong>
-    </li>
-  </ul>
 
+  <!-- 🔍 Търсене -->
+  <div class="search-bar">
+    <input type="text"
+           [(ngModel)]="searchTerm"
+           placeholder="🔍 Търси по email или потребител..."
+           class="search-input" />
+  </div>
+
+  <!-- 📋 Таблица -->
+  <table class="users-table" *ngIf="filteredUsers.length > 0; else noUsers">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Потребител</th>
+        <th>Email</th>
+        <th>Роля</th>
+        <th class="text-center">Действия</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of filteredUsers; index as i"
+          [ngClass]="{ 'self-row': user._id === currentUserId }"
+          class="fade-in">
+        <td>{{ i + 1 }}</td>
+        <td>
+          {{ user.username }}
+          <div class="user-id">🆔 {{ user._id.slice(-6) }}</div>
+        </td>
+        <td>{{ user.email }}</td>
+        <td>
+          <span [ngClass]="{
+              'badge-admin': user.role === 'admin',
+              'badge-user': user.role === 'user'
+            }">
+            {{ user.role }}
+          </span>
+        </td>
+        <td class="actions-cell">
+          <ng-container *ngIf="currentUserRole === 'admin' && user._id !== currentUserId">
+            <button *ngIf="user.role === 'user'"
+                    (click)="confirmRoleChange(user._id, 'admin')"
+                    class="btn-role promote"
+                    title="Назначи за админ">
+              ⬆️
+            </button>
+            <button *ngIf="user.role === 'admin'"
+                    (click)="confirmRoleChange(user._id, 'user')"
+                    class="btn-role demote"
+                    title="Премахни админ">
+              ⬇️
+            </button>
+            <button (click)="goToEditUser(user._id)"
+                    class="btn-edit"
+                    title="Редактирай потребител">
+              ✏️
+            </button>
+          </ng-container>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ❌ Няма потребители -->
   <ng-template #noUsers>
-    <p>❗ Няма намерени потребители.</p>
+    <p class="no-users-msg">❗ Няма намерени потребители.</p>
   </ng-template>
 </div>

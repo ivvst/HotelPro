@@ -43,37 +43,60 @@ function register(req, res, next) {
         });
 }
 
-function login(req, res, next) {
-    console.log('LOGIN КОНТРОЛЕР СЕ ИЗВИКВА!');
-    const { email, password } = req.body;
+async function login(req, res, next) {
+    try {
+        console.log('LOGIN КОНТРОЛЕР СЕ ИЗВИКВА!');
+        const { email, password } = req.body;
 
-    userModel.findOne({ email })
-        .then(user => {
-            return Promise.all([user, user ? user.matchPassword(password) : false]);
-        })
-        .then(([user, match]) => {
-            if (!match) {
-                res.status(401)
-                    .send({ message: 'Wrong email or password' });
-                return
-            }
-            user = bsonToJson(user);
-            user = removePassword(user);
+        // Ако някъде си правил select()-и, насилваме да дойде password
+        const user = await userModel.findOne({ email }); // без .lean()!
 
-            // ---- ПРОМЕНИ ТУК:
-            console.log('LOGIN user:', user);  // <-- да видиш user-а!
-            const token = utils.jwt.createToken({ _id: user._id, email: user.email, role: user.role }); // <-- ДОБАВИ role!
+        if (!user) {
+            return res.status(401).send({ message: 'Wrong email or password' });
+        }
 
-            if (process.env.NODE_ENV === 'production') {
-                res.cookie(authCookieName, token, { httpOnly: true, sameSite: 'none', secure: true })
-            } else {
-                res.cookie(authCookieName, token, { httpOnly: true })
-            }
-            res.status(200)
-                .send(user);
-        })
-        .catch(next);
+        // matchPassword може да липсва, ако моделът е различен/без methods
+        let match = false;
+        if (typeof user.matchPassword === 'function') {
+            match = await user.matchPassword(password);
+        } else {
+            // Fallback – директно сравнение с bcrypt
+            match = await bcrypt.compare(password, user.password);
+        }
+
+        if (!match) {
+            return res.status(401).send({ message: 'Wrong email or password' });
+        }
+
+        // Подготвяме чист обект без парола
+        const plain = JSON.parse(JSON.stringify(user));
+        const { password: _pw, __v, ...safeUser } = plain;
+
+        // Винаги имай role (ако липсва в стар запис – user)
+        const role = user.role || 'user';
+
+        console.log('LOGIN user (safe):', { ...safeUser, role });
+
+        const token = utils.jwt.createToken({
+            _id: user._id,
+            email: user.email,
+            role,                // включваме ролята в токена
+        });
+
+        const cookieOpts =
+            process.env.NODE_ENV === 'production'
+                ? { httpOnly: true, sameSite: 'none', secure: true }
+                : { httpOnly: true };
+
+        res.cookie(authCookieName, token, cookieOpts);
+
+        // Върни user без парола + role за фронтенда
+        return res.status(200).send({ ...safeUser, role });
+    } catch (err) {
+        return next(err);
+    }
 }
+
 
 function logout(req, res) {
     const token = req.cookies[authCookieName];
@@ -94,20 +117,9 @@ function getProfileInfo(req, res, next) {
         .then(user => { res.status(200).json(user) })
         .catch(next);
 }
-
-function editProfileInfo(req, res, next) {
-    const { _id: userId } = req.user;
-    const { tel, username, email } = req.body;
-
-    userModel.findOneAndUpdate({ _id: userId }, { tel, username, email }, { runValidators: true, new: true })
-        .then(x => { res.status(200).json(x) })
-        .catch(next);
-}
-
 module.exports = {
     login,
     register,
     logout,
     getProfileInfo,
-    editProfileInfo,
 }

@@ -1,0 +1,94 @@
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-header">
+    <h2>Админ панел</h2>
+    <button class="btn-create" (click)="onCreate()">+ Създай</button>
+  </div>
+</section>
+
+<!-- Плаващи карти върху hero -->
+<div class="stats-cards-wrapper">
+  <div class="stats-cards">
+    <article class="card">
+      <div class="card-icon box">👤</div>
+      <div class="card-content">
+        <h4 class="card-title">Гости</h4>
+        <p class="card-number">{{ stats.guests }}</p>
+        <p class="card-subtext">Активни резервации</p>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="card-icon list">🛏️</div>
+      <div class="card-content">
+        <h4 class="card-title">Стаи</h4>
+        <p class="card-number">{{ stats.rooms }}</p>
+        <p class="card-subtext">Общо налични</p>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="card-icon teams">🛳️</div>
+      <div class="card-content">
+        <h4 class="card-title">Круизи</h4>
+        <p class="card-number">{{ stats.cruises }}</p>
+        <p class="card-subtext">Активни оферти</p>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="card-icon target">🎯</div>
+      <div class="card-content">
+        <h4 class="card-title">Заетост</h4>
+        <p class="card-number">{{ stats.occupancyPct }}%</p>
+        <p class="card-subtext">
+          <span class="progress-bar">
+            <span class="fill" [ngStyle]="progressStyle(stats.occupancyPct)"></span>
+          </span>
+          текуща заетост
+        </p>
+      </div>
+    </article>
+  </div>
+</div>
+
+<!-- Таблица с проекти/операции -->
+<section class="project-table-wrapper">
+  <table class="project-table">
+    <thead>
+      <tr>
+        <th>Проект</th>
+        <th>Приоритет</th>
+        <th>Прогрес</th>
+        <th>Екип</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of projects">
+        <td>
+          <img *ngIf="p.iconUrl" [src]="p.iconUrl" alt="" />
+          {{ p.name }}
+        </td>
+        <td>
+          <span [class]="badgeClass(p.priority)">
+            {{ p.priority === 'high' ? 'High' : p.priority === 'medium' ? 'Medium' : 'Low' }}
+          </span>
+        </td>
+        <td>
+          <span class="progress-bar">
+            <span class="fill" [ngStyle]="progressStyle(p.progressPct)"></span>
+          </span>
+          {{ p.progressPct }}%
+        </td>
+        <td>
+          <span class="avatars">
+            <ng-container *ngFor="let a of p.teamAvatars; let idx = index">
+              <img [src]="a" [alt]="'member-'+idx" />
+            </ng-container>
+            <span *ngIf="p.teamAvatars.length > 3" class="more">+{{ p.teamAvatars.length - 3 }}</span>
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>

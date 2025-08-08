@@ -63,6 +63,13 @@ export class UserService implements OnDestroy {
     }
   }
 
+  updateUser(id: string, data: Partial<User>) {
+    return this.http.put<User>(
+      `${this.apiUrl}/users/${id}`,
+      data,
+      { withCredentials: true }
+    );
+  }
   /** Централизирано изчистване на потребител */
   clearUser() {
     this.setUser(null);
@@ -113,14 +120,22 @@ export class UserService implements OnDestroy {
   }
 
   /** Обновяване на профил */
-  updateProfile(username: string, email: string) {
+  updateProfile(username: string, email: string, role?: 'user' | 'admin') {
     return this.http.put<UserForAuth>(
       `${this.apiUrl}/users/profile`,
-      { username, email },
+      { username, email, role },
       { withCredentials: true }
     ).pipe(
       tap((user) => this.setUser(user))
     );
+  }
+  //**Admin choose user for an update */
+  getUserById(id: string) {
+    return this.http.get<UserForAuth>(`${this.apiUrl}/users/${id}`, { withCredentials: true });
+  }
+
+  updateUserById(id: string, data: { username: string, email: string, role?: string }) {
+    return this.http.put<UserForAuth>(`${this.apiUrl}/users/${id}`, data, { withCredentials: true });
   }
 
   /** Премахване на Subscription */

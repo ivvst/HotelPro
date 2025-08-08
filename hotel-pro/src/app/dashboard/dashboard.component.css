@@ -1,195 +1,74 @@
-/* — Hero background & header — */
-.hero {
-  background: linear-gradient(90deg, #6b46c1 0%, #805ad5 100%);
-  height: 200px;
-  /* фиксирана височина */
-  border-radius: 0 0 8px 8px;
+.dashboard-bg {
   position: relative;
-}
-
-.hero-header {
+  height: 100vh;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2.5rem;
-}
-
-.hero-header h2 {
-  color: white;
-  font-size: 1.75rem;
-}
-
-.btn-create {
-  background: white;
-  color: #6b46c1;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* — Wrapper, който плува над hero — */
-.stats-cards-wrapper {
-  margin-top: -80px;
-  /* издига картите 80px надолу в hero */
-  padding: 0 1.5rem;
-}
-
-/* — Стат карти — */
-.stats-cards {
-  display: flex;
-  gap: 1rem;
-}
-
-.card {
-  position: relative;
-  background: #fff;
-  border-radius: 8px;
-  flex: 1;
-  min-width: 220px;
-  padding: 1.5rem 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-}
-
-.card-icon {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 40px;
-  height: 40px;
-  background: rgba(229, 229, 254, 0.6);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  background: url('https://images.freecreatives.com/wp-content/uploads/2016/04/High-Quality-Website-Background.jpg') no-repeat center center;
+  background-size: cover;
+  overflow: hidden;
 }
 
-/* добавяш реалните икони тук */
-.card-icon.box {
-  /* background: url('assets/icons/box.svg') center/50% no-repeat; */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
 }
 
-.card-icon.list {
-  /* ... */
+.dashboard-box {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 6px 30px rgba(0,0,0,0.3);
+  text-align: center;
+  max-width: 380px;
+  width: 100%;
+  z-index: 1;
+  animation: fadeSlideIn 0.6s ease-in-out;
 }
 
-.card-icon.teams {
-  /* ... */
+.dashboard-box h2 {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  font-size: 1.5rem;
 }
 
-.card-icon.target {
-  /* ... */
+.dashboard-box p {
+  margin-bottom: 1.5rem;
+  color: #555;
 }
 
-.card-content {
+.buttons {
   display: flex;
   flex-direction: column;
+  gap: 0.8rem;
 }
 
-.card-title {
-  margin: 0;
-  font-size: 1rem;
-  color: #334155;
-}
-
-.card-number {
-  margin: 0.25rem 0;
-  font-size: 2rem;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.card-subtext {
-  margin: 0;
-  font-size: 0.875rem;
-  color: #64748b;
-}
-
-
-/* Projects table */
-.project-table-wrapper {
-  background: white;
+button {
+  padding: 0.8rem;
+  font-size: 16px;
+  border: none;
   border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
-}
-
-.project-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.project-table th,
-.project-table td {
-  text-align: left;
-  padding: 1rem;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.project-table img {
-  width: 24px;
-  vertical-align: middle;
-  margin-right: 0.5rem;
-}
-
-/* Badges */
-.badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
+  cursor: pointer;
+  background: #3498db;
   color: white;
-  font-size: 0.75rem;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-.badge.high {
-  background: #e53e3e;
+button:hover {
+  background: #2980b9;
+  transform: scale(1.05);
 }
 
-.badge.medium {
-  background: #dd6b20;
-}
-
-.badge.low {
-  background: #3182ce;
-}
-
-/* Avatars */
-.avatars {
-  display: inline-flex;
-  align-items: center;
-  gap: -0.5rem;
-}
-
-.avatars img {
-  width: 24px;
-  height: 24px;
-  border: 2px solid white;
-  border-radius: 50%;
-}
-
-.avatars .more {
-  background: #805ad5;
-  color: white;
-  border-radius: 50%;
-  padding: 0 0.5rem;
-  font-size: 0.75rem;
-}
-
-/* Progress bar */
-.progress-bar {
-  display: inline-block;
-  width: 80px;
-  height: 6px;
-  background: #edf2f7;
-  border-radius: 4px;
-  margin-right: 0.5rem;
-  overflow: hidden;
-  vertical-align: middle;
-}
-
-.progress-bar .fill {
-  height: 100%;
-  background: #805ad5;
+/* 🎯 Анимация при смяна на режим */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

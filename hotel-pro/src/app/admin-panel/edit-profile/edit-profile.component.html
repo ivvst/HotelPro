@@ -1,0 +1,29 @@
+<div class="edit-profile-container" *ngIf="user">
+  <h2>✏️ Редакция на профил</h2>
+
+  <form (ngSubmit)="onUpdateProfile()" class="edit-form">
+    <label>
+      Потребителско име:
+      <input type="text" [(ngModel)]="username" name="username" required />
+    </label>
+
+    <label>
+      Имейл:
+      <input type="email" [(ngModel)]="email" name="email" required />
+    </label>
+
+    <div class="form-buttons">
+      <button type="submit" class="btn-save">💾 Запази</button>
+      <button type="button" class="btn-cancel" (click)="onCancel()">❌ Отказ</button>
+    </div>
+  </form>
+
+  <div *ngIf="successMsg" class="success-msg fade-in">{{ successMsg }}</div>
+  <div *ngIf="errorMsg" class="error-msg fade-in">{{ errorMsg }}</div>
+</div>
+
+<div *ngIf="!user && !errorMsg && !successMsg" class="loader">
+  ⏳ Зареждане на данни...
+</div>
+
+<div *ngIf="errorMsg && !user" class="error-msg">{{ errorMsg }}</div>

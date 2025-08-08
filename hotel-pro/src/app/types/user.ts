@@ -6,6 +6,7 @@ export interface User {
   created_at: string;
   themes?: string[];
   posts?: string[];
+  role?: 'user' | 'admin';
 }
 export interface UserForAuth {
   _id: string;

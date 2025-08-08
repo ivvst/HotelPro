@@ -1,147 +1,18 @@
+<div class="dashboard-bg">
+  <div class="overlay"></div>
 
-    <!-- Hero purple background + header -->
-    <section class="hero">
-      <div class="hero-header">
-        <h2>Projects</h2>
-        <button class="btn-create" [routerLink]="['/room']">See Rooms</button>
-      </div>
-    </section>
-
-    <!-- Cards floating over the hero -->
-    <div class="stats-cards-wrapper">
-      <div class="stats-cards">
-        <div class="card">
-          <div class="card-icon box">
-            <!-- Briefcase icon SVG -->
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="size-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 7V3m3 4h5a2 2 0 012 2v4a2 2 0 01-2 2h-5
-                   m-6 0H4a2 2 0 01-2-2V9a2 2 0 012-2h5m6 0V3H9v4" />
-            </svg>
-          </div>
-          <div class="card-content">
-            <p class="card-title">Projects</p>
-            <p class="card-number">18</p>
-            <p class="card-subtext">2 Completed</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-icon list">
-            <!-- Clipboard List icon SVG -->
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="size-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m3-2h-2a2 2 0 00-2-2H8
-                   a2 2 0 00-2 2H4m16 6H4m16 6H4" />
-            </svg>
-          </div>
-          <div class="card-content">
-            <p class="card-title">Active Task</p>
-            <p class="card-number">132</p>
-            <p class="card-subtext">28 Completed</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-icon teams">
-            <!-- Users icon SVG -->
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="size-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a4 4 0 00-3-3.87
-                   M9 20H4v-2a4 4 0 013-3.87
-                   m9-2.13a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-          </div>
-          <div class="card-content">
-            <p class="card-title">Teams</p>
-            <p class="card-number">12</p>
-            <p class="card-subtext">1 Completed</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-icon target">
-            <!-- Target icon SVG -->
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="size-6">
-              <circle cx="12" cy="12" r="10" />
-              <circle cx="12" cy="12" r="6" />
-              <circle cx="12" cy="12" r="2" />
-            </svg>
-          </div>
-          <div class="card-content">
-            <p class="card-title">Productivity</p>
-            <p class="card-number">76%</p>
-            <p class="card-subtext">5% Completed</p>
-          </div>
-        </div>
-      </div>
+  <div class="dashboard-box" *ngIf="!isLoggedIn">
+    <h2>Добре дошли!</h2>
+    <p>Моля, изберете действие:</p>
+    <div class="buttons">
+      <button (click)="goToLogin()">🔑 Вход</button>
+      <button (click)="goToRegister()">📝 Регистрация</button>
     </div>
+  </div>
 
-    <!-- Projects Table -->
-    <div class="project-table-wrapper">
-      <table class="project-table">
-        <thead>
-          <tr>
-            <th>Project Name</th>
-            <th>Hours</th>
-            <th>Priority</th>
-            <th>Members</th>
-            <th>Progress</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><img src="assets/dropbox.png" alt="Dropbox"> Dropbox Design System</td>
-            <td>34</td>
-            <td><span class="badge medium">Medium</span></td>
-            <td>
-              <div class="avatars">
-                <img src="assets/user1.jpg" alt="">
-                <img src="assets/user2.jpg" alt="">
-                <img src="assets/user3.jpg" alt="">
-                <span class="more">+5</span>
-              </div>
-            </td>
-            <td>
-              <div class="progress-bar">
-                <div class="fill" style="width:15%"></div>
-              </div>15%
-            </td>
-          </tr>
-          <tr>
-            <td><img src="assets/slack.png" alt="Slack"> Slack Team UI Design</td>
-            <td>47</td>
-            <td><span class="badge high">High</span></td>
-            <td>
-              <div class="avatars">
-                <img src="assets/user4.jpg" alt="">
-                <img src="assets/user5.jpg" alt="">
-                <span class="more">+5</span>
-              </div>
-            </td>
-            <td>
-              <div class="progress-bar">
-                <div class="fill" style="width:35%"></div>
-              </div>35%
-            </td>
-          </tr>
-          <tr>
-            <td><img src="assets/github.png" alt="GitHub"> GitHub Satellite</td>
-            <td>120</td>
-            <td><span class="badge low">Low</span></td>
-            <td>
-              <div class="avatars">
-                <img src="assets/user6.jpg" alt="">
-                <span class="more">+5</span>
-              </div>
-            </td>
-            <td>
-              <div class="progress-bar">
-                <div class="fill" style="width:75%"></div>
-              </div>75%
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="dashboard-box" *ngIf="isLoggedIn">
+    <h2>👋 Здравей отново!</h2>
+    <p>Радваме се да те видим.</p>
+    <button (click)="goToMain()">🏠 Към началната страница</button>
+  </div>
+</div>

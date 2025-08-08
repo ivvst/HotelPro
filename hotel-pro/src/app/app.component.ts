@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { UserService } from './services/user.service';
-import { HomeComponent } from './home/home.component';
-import { RoomComponent } from './room/room.component';
 import { CommonModule } from '@angular/common';
-
+// import { DashboardComponent } from './dashboard/dashboard.component';
 import {
   trigger,
   state,
@@ -12,11 +10,10 @@ import {
   transition,
   animate
 } from '@angular/animations';
+
 @Component({
   selector: 'app-root',
-  imports: [CommonModule,
-    RouterModule, RouterOutlet],      // ← make routerLink & router-outlet available
-
+  imports: [CommonModule, RouterModule, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   animations: [
@@ -29,30 +26,38 @@ import {
 })
 export class AppComponent {
   protected title = 'hotel-pro';
+  sidebarVisible = true;
+  showDropdown = false;
+  openMenu: string | null = null;
+
   constructor(public userService: UserService, private router: Router) { }
 
-  goToRoom() {
+  toggleMenu(menuName: string) {
+    this.openMenu = this.openMenu === menuName ? null : menuName;
+  }
+
+  goToRoom(): void {
     this.router.navigate(['/room'], { fragment: 'table' });
   }
- loadProfile(): void {
-  this.userService.getProfileInfo().subscribe({
-    next: (user) => {
-      console.log('Profile:', user);
-      this.userService.setUser(user); // ако искаш да пазиш потребителя
-    },
-    error: (err) => {
-      console.error('Грешка при взимане на профил:', err);
-      this.userService.clearUser();
-    }
-  });
-}
 
-  sidebarVisible = true;
-  toggleSidebar() {
+  loadProfile(): void {
+    this.userService.getProfileInfo().subscribe({
+      next: (user) => {
+        console.log('Profile:', user);
+        this.userService.setUser(user);
+      },
+      error: (err) => {
+        console.error('Грешка при взимане на профил:', err);
+        this.userService.clearUser();
+      }
+    });
+  }
+
+  toggleSidebar(): void {
     this.sidebarVisible = !this.sidebarVisible;
   }
-  showDropdown = false;
-  onNotifClick() {
+
+  onNotifClick(): void {
     console.log('🔔 Камбанката беше натисната');
   }
 
@@ -61,11 +66,14 @@ export class AppComponent {
     console.log('Dropdown toggled:', this.showDropdown);
   }
 
-
   logout(): void {
-    this.showDropdown=false
+    this.showDropdown = false;
     this.userService.logout().subscribe(() => {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/dashboard']);
     });
+  }
+
+  isLoggedIn(): boolean {
+    return this.userService.isLogged; // методът ти от UserService
   }
 }

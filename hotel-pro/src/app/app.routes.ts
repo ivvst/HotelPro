@@ -17,15 +17,20 @@ import { CruiseAddComponent } from './cruise/create-cruise/cruise-add.component'
 import { AdminGuard } from './guards/admin.guards';
 import { AuthGuard } from './guards/auth.guards';
 import { GuestGuard } from './guards/guest.guards';
+import { EditProfileComponent } from './admin-panel/edit-profile/edit-profile.component';
+import { AdminDashboardComponent } from './admin-panel/admin-dashboard/admin-dashboard.component';
 // import { AuthGuard } from './app/guards/auth.guard';
 // import { AdminGuard } from './app/guards/admin.guard';
 
 export const routes: Routes = [
   { path: '', component: DashboardComponent },
-  { path: 'cruise', component: CruisesComponent,canActivate: [AuthGuard] },
+  { path: 'cruise', component: CruisesComponent, canActivate: [AuthGuard] },
   { path: 'cruise/add', component: CruiseAddComponent, canActivate: [AdminGuard] }, // само за админ
-  { path: 'profile', canActivate: [AuthGuard], loadComponent: () => import('./profile.component').then(m => m.ProfileComponent) },
-  { path: 'cruise/:id', component: CruisesComponent ,canActivate: [AuthGuard]},
+  {
+    path: 'profile', canActivate: [AuthGuard], loadComponent: () =>
+      import('./profile.component').then(m => m.ProfileComponent)
+  },
+  { path: 'cruise/:id', component: CruisesComponent, canActivate: [AuthGuard] },
   // excursion list for chosen cruise
   { path: 'cruises/:id/excursions', component: ExcursionListComponent, canActivate: [AuthGuard] },
 
@@ -46,16 +51,14 @@ export const routes: Routes = [
 
   { path: 'dashboard', component: DashboardComponent },  //canActivate: [AuthGuard] },
   { path: 'catalog', component: CatalogComponent, canActivate: [AuthGuard] },
+  { path: 'admin-dashboard', component: AdminDashboardComponent, canActivate: [AdminGuard] },
   { path: 'admin', component: AdminPanelComponent, canActivate: [AdminGuard] }, //canActivate: [AdminGuard] },
+   //canActivate: [AdminGuard] },
 
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
-  { path: 'users', component: AdminPanelComponent },
+  { path: 'users', component: AdminPanelComponent,canActivate:[AdminGuard] },
+  { path: 'users/:id/edit-profile', component: EditProfileComponent, canActivate: [AdminGuard] },
 
-  // {
-  //   // path: 'dashboard',
-  //   // canActivate: [AuthGuard],
-  //   // loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
-  // }
 
   { path: '**', redirectTo: '/home' }
 ];
