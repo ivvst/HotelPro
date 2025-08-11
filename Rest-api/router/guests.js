@@ -1,21 +1,50 @@
 // router/guests.js
 const express = require('express');
+const mongoose = require('mongoose');
 const Guest = require('../models/guest');
+const Cruise = require('../models/cruise');
 const router = express.Router();
 
-// GET  /api/guests    — върни всички гости
+// Лог за всички заявки в този router
+router.use((req, res, next) => {
+  console.log('[guests router]', req.method, req.originalUrl);
+  next();
+});
+
+// 1) Статични маршрути
+router.get('/ping', (req, res) => {
+  console.log('[guests] /ping OK');
+  res.json({ ok: true, scope: 'guests' });
+});
+
+router.get('/debug', (req, res) => {
+  res.json({ route: '/api/guests/debug', query: req.query });
+});
+
+// 2) Списък гости с опционален филтър по excursionId
 router.get('/', async (req, res) => {
   try {
-    const guests = await Guest.find().lean();
+    const { excursionId } = req.query;
+    const filter = {};
+    if (excursionId) {
+      filter.excursions = {
+        $elemMatch: {
+          _id: mongoose.isValidObjectId(excursionId)
+            ? new mongoose.Types.ObjectId(excursionId)
+            : excursionId
+        }
+      };
+    }
+    const guests = await Guest.find(filter).lean();
     res.json(guests);
   } catch (err) {
-    console.error('Error fetching guests:', err);
+    console.error('Error fetching guests list:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// GET  /api/guests/:id — върни един гост по _id
-router.get('/:id', async (req, res) => {
+// 3) GET по валидно ObjectId
+router.get('/:id([0-9a-fA-F]{24})', async (req, res) => {
   try {
     const guest = await Guest.findById(req.params.id).lean();
     if (!guest) return res.status(404).json({ error: 'Guest not found' });
@@ -26,7 +55,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/guests    — създай нов гост
+// 4) POST - създаване на гост
 router.post('/', async (req, res) => {
   try {
     const newGuest = new Guest(req.body);
@@ -37,11 +66,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-
-
-
-// PUT  /api/guests/:id — обнови съществуващ гост
-router.put('/:id', async (req, res) => {
+// 5) PUT - обновяване на гост
+router.put('/:id([0-9a-fA-F]{24})', async (req, res) => {
   try {
     const updated = await Guest.findByIdAndUpdate(
       req.params.id,
@@ -56,8 +82,8 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// DELETE /api/guests/:id — изтрий гост
-router.delete('/:id', async (req, res) => {
+// 6) DELETE - изтриване на гост
+router.delete('/:id([0-9a-fA-F]{24})', async (req, res) => {
   try {
     const deleted = await Guest.findByIdAndDelete(req.params.id).lean();
     if (!deleted) return res.status(404).json({ error: 'Guest not found' });
@@ -68,8 +94,8 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-//Extend for Excursions
-router.patch('/:guestId/excursions', async (req, res) => {
+// 7) PATCH - добавяне на екскурзия към гост
+router.patch('/:guestId([0-9a-fA-F]{24})/excursions', async (req, res) => {
   try {
     const { _id, name } = req.body;
     if (!_id || !name) return res.status(400).json({ error: 'Missing excursion _id or name' });
@@ -77,64 +103,88 @@ router.patch('/:guestId/excursions', async (req, res) => {
     const guest = await Guest.findById(req.params.guestId);
     if (!guest) return res.status(404).json({ error: 'Guest not found' });
 
-    // Проверка да не добавя екскурзията два пъти
-    const alreadyExists = guest.excursions.some(ex => ex && ex._id && ex._id.toString() === _id);
-    if (!alreadyExists) {
+    // вече записан?
+    if ((guest.excursions || []).some(ex => String(ex?._id) === String(_id))) {
+      return res.json(guest);
+    }
+
+    let addedToWaitlist = false;
+
+    if (guest.cruiseId) {
+      const cruise = await Cruise.findById(guest.cruiseId).catch(() => null);
+      const ex = cruise?.excursions.id(_id);
+
+      if (ex) {
+        const cap = Number(ex.capacity || 0);
+
+        // колко са реално записани
+        const enrolled = await Guest.countDocuments({
+          cruiseId: guest.cruiseId,
+          'excursions._id': ex._id
+        });
+
+        if (cap > 0 && enrolled >= cap) {
+          // ПЪЛНО → добавяме в чакащи (ако не е там)
+          ex.waitlist = ex.waitlist || [];
+          const alreadyWaiting = ex.waitlist.some(w => String(w.guestId) === String(guest._id));
+          if (!alreadyWaiting) {
+            ex.waitlist.push({
+              guestId: guest._id,
+              firstName: guest.firstName,
+              lastName: guest.lastName,
+              email: guest.email
+            });
+            await cruise.save();
+          }
+          addedToWaitlist = true;
+        } else {
+          // ИМА МЯСТО → преди записване, махни от waitlist ако фигурира
+          if (Array.isArray(ex.waitlist) && ex.waitlist.length) {
+            ex.waitlist = ex.waitlist.filter(w => String(w.guestId) !== String(guest._id)); // ← ТУК
+            await cruise.save(); // ← ТУК
+          }
+        }
+      }
+    }
+
+    if (!addedToWaitlist) {
+      guest.excursions = guest.excursions || [];
       guest.excursions.push({ _id, name });
-      // Филтриране на невалидни (ако има случайно)
-      guest.excursions = guest.excursions.filter(ex => ex && ex._id);
       await guest.save();
     }
-    res.json(guest);
+
+    return res.json(guest);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error('[PATCH excursions] error:', err);
+    return res.status(400).json({ error: err.message || 'Bad Request' });
   }
 });
 
 
-// DELETE /api/guests/:guestId/excursions/:excursionId
-router.delete('/:guestId/excursions/:excursionId', async (req, res) => {
+// 8) DELETE - премахване на екскурзия от гост
+router.delete('/:guestId([0-9a-fA-F]{24})/excursions/:excursionId([0-9a-fA-F]{24})', async (req, res) => {
   try {
-    const guest = await Guest.findById(req.params.guestId);
+    const { guestId, excursionId } = req.params;
+    const guest = await Guest.findById(guestId);
     if (!guest) return res.status(404).json({ error: 'Guest not found' });
 
-    const before = guest.excursions.length;
-    guest.excursions = guest.excursions.filter(
-      e => e !== req.params.excursionId
+    const before = (guest.excursions || []).length;
+    guest.excursions = (guest.excursions || []).filter(
+      e => String(e?._id) !== String(excursionId)
     );
     const after = guest.excursions.length;
 
     if (before === after) {
-      return res.status(404).json({ message: 'Excursion not found for this guest.' });
+      return res.status(404).json({ error: 'Excursion not found for this guest' });
     }
 
     await guest.save();
-
-    res.json({ message: 'Екскурзията беше успешно премахната от госта!', guest });
+    const updated = await Guest.findById(guestId).lean();
+    res.status(200).json(updated);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error('Error in DELETE excursion:', err);
+    res.status(500).json({ error: err.message });
   }
 });
 
-
-
-
 module.exports = router;
-
-// router.patch('/:guestId/excursions', async (req, res) => {
-//   try {
-//     const { excursionId } = req.body;
-//     const guest = await Guest.findById(req.params.guestId);
-//     if (!guest) return res.status(404).json({ error: 'Guest not found' });
-
-//     console.log('I am here')
-//     if (!guest.excursions.includes(excursionId,excursionName)) {
-//       guest.excursions.push(guest.excursions.push({ _id, name }));
-//       await guest.save();
-//     }
-
-//     res.json(guest);
-//   } catch (err) {
-//     res.status(400).json({ error: err.message });
-//   }
-// });

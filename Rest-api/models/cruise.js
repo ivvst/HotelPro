@@ -7,8 +7,16 @@ const excursionSchema = new mongoose.Schema({
   date: { type: String, required: true },      // напр. '2025-09-05'
   fromTime: { type: String, required: true },  // напр. '10:00'
   toTime: { type: String, required: true },   // напр. '14:00'
-  deleteRequested: { type: Boolean, default: false }
-});
+  deleteRequested: { type: Boolean, default: false },
+
+  capacity: { type: Number, default: 0 }, // 0 = без лимит
+  waitlist: [{
+    guestId: { type: mongoose.Schema.Types.ObjectId, ref: 'Guest' },
+    firstName: String,
+    lastName: String,
+    email: String
+  }]
+}, { _id: true });
 
 // Схема за круиз:
 const cruiseSchema = new mongoose.Schema({
