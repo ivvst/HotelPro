@@ -138,3 +138,49 @@ h3 {
   border-radius: 7px;
   margin-bottom: 10px;
 }
+
+/* Метрики под името на екскурзия */
+.x-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.x-metrics .cap {
+  background: rgba(99, 102, 241, 0.08);
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.x-metrics .wl {
+  background: rgba(239, 68, 68, 0.08);
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+/* Инлайн редакция на капацитет */
+.cap-inline {
+  margin-top: 6px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.capacity-input {
+  width: 70px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+  background: var(--soft);
+}
+
+.capacity-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  outline: none;
+}

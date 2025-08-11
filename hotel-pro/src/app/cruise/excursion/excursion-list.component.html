@@ -1,66 +1,72 @@
-<div class="exc-list-wrapper">
-  <h3>Екскурзии към круиза</h3>
-
-  <!-- Съобщения -->
-  <div *ngIf="successMsg" class="success">{{ successMsg }}</div>
-  <div *ngIf="errorMsg" class="error">{{ errorMsg }}</div>
-
-  <!-- Форма за добавяне/редакция: видима само за админ -->
-  <form *ngIf="isAdmin" (ngSubmit)="submit()" #exForm="ngForm" class="ex-form">
-    <input type="text" [(ngModel)]="formData.name" name="name" required placeholder="Име на екскурзия" />
-    <input type="date" [(ngModel)]="formData.date" name="date" required placeholder="Дата" />
-    <input type="time" [(ngModel)]="formData.fromTime" name="fromTime" required placeholder="От час" />
-    <input type="time" [(ngModel)]="formData.toTime" name="toTime" required placeholder="До час" />
-    <textarea [(ngModel)]="formData.description" name="description" placeholder="Описание (незадължително)">
-    </textarea>
-    <button type="submit" [disabled]="exForm.invalid">
-      {{ editExcursion ? 'Запази' : 'Добави' }}
-    </button>
-    <button *ngIf="editExcursion" type="button" (click)="cancelEdit()">Отказ</button>
-  </form>
-
-  <div *ngIf="loading">Зареждане...</div>
-  <div *ngIf="error" class="error">{{ error }}</div>
-
-  <table *ngIf="excursions.length" class="exc-table">
-    <thead>
+<table *ngIf="excursions.length" class="exc-table">
+  <thead>
+    <tr>
+      <th>Име</th>
+      <th>Дата</th>
+      <th>От</th>
+      <th>До</th>
+      <th>Описание</th>
+      <th>Действия</th>
+    </tr>
+  </thead>
+  <tbody>
+    <ng-container *ngFor="let ex of excursions">
       <tr>
-        <th>Име</th>
-        <th>Дата</th>
-        <th>От</th>
-        <th>До</th>
-        <th>Описание</th>
-        <th>Действия</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let ex of excursions">
         <td>
           {{ ex.name }}
           <span *ngIf="ex.deleteRequested" class="flag-delete" title="Маркирана за изтриване">⛔</span>
+
+          <!-- метрики под името -->
+          <div class="x-metrics">
+            <span class="cap">Капацитет: {{ ex.capacity ?? 0 }}</span>
+            <span class="wl">Чакащи: {{ ex.waitlist?.length || 0 }}</span>
+          </div>
         </td>
         <td>{{ ex.date ? (ex.date | date:'dd/MM/yyyy') : '-' }}</td>
         <td>{{ ex.fromTime || '-' }}</td>
-        <td>{{ ex.fromTime || '-' }}</td>
+        <td>{{ ex.toTime || '-' }}</td>
         <td>{{ (ex.description || '-') | shorten:50 }}</td>
         <td>
           <button *ngIf="isAdmin" (click)="startEdit(ex)">Редактирай</button>
-          <!-- Само админ може да трие -->
           <button *ngIf="isAdmin" (click)="deleteExcursion(ex._id!)">Изтрий</button>
-          <button *ngIf="ex.deleteRequested && isAdmin" (click)="rejectDelete(ex._id)">
-            Откажи изтриване
-          </button>
-
-          <!-- За НЕ-админ: може само да поиска изтриване ако не е маркирано -->
-          <button *ngIf="!isAdmin && !ex.deleteRequested" (click)="requestDelete(ex._id)">
-            Маркирай за изтриване
-          </button>
-
-          <!-- Ако не е админ и е маркирано -->
+          <button *ngIf="ex.deleteRequested && isAdmin" (click)="rejectDelete(ex._id)">Откажи изтриване</button>
+          <button *ngIf="!isAdmin && !ex.deleteRequested" (click)="requestDelete(ex._id)">Маркирай за изтриване</button>
           <span *ngIf="!isAdmin && ex.deleteRequested" class="flag-delete-text">Изчаква одобрение</span>
+
+          <!-- бутон за гости -->
+          <button (click)="toggleGuests(ex._id)">Покажи гости</button>
+
+          <!-- Инлайн смяна на капацитет (само за админ) -->
+          <div *ngIf="isAdmin" class="cap-inline">
+            <input type="number" min="1" max="20" class="capacity-input" [value]="ex.capacity || 1"
+              (change)="saveCapacity(ex, $event)" />
+
+          </div>
         </td>
       </tr>
-    </tbody>
-  </table>
-  <div *ngIf="!excursions.length && !loading" class="empty">Няма екскурзии</div>
-</div>
+
+      <!-- Ред с гостите -->
+      <tr *ngIf="expanded[ex._id || '']">
+        <td colspan="6">
+          <div *ngIf="loadingGuests[ex._id || '']" class="loading-overlay">
+            Зареждане на гости...
+          </div>
+
+          <div *ngIf="errorByExcursion[ex._id || '']" class="error">
+            {{ errorByExcursion[ex._id || ''] }}
+          </div>
+
+          <ul *ngIf="guestsByExcursion[ex._id || '']?.length" class="guest-list">
+            <li *ngFor="let g of guestsByExcursion[ex._id || '']">
+              {{ g.firstName }} {{ g.lastName }} (Стая: {{ g.roomNumber || 'N/A' }})
+            </li>
+          </ul>
+
+          <div *ngIf="!guestsByExcursion[ex._id || '']?.length && !loadingGuests[ex._id || '']" class="empty">
+            Няма записани гости за тази екскурзия.
+          </div>
+        </td>
+      </tr>
+    </ng-container>
+  </tbody>
+</table>

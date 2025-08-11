@@ -1,11 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CruiseService } from '../../services/cruise.service';
+import { GuestService } from '../../services/guest.service';
 import { Excursion } from '../../types/excursion';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { UserService } from '../../services/user.service'; // <-- СМЯНА
+import { UserService } from '../../services/user.service';
 import { ShortenPipe } from '../../pipes/shorten.pipes';
+import { Guest } from '../../types/guests';
 
 @Component({
   selector: 'app-excursion-list',
@@ -26,6 +28,11 @@ export class ExcursionListComponent implements OnInit {
   isAdmin = false;
   userRole?: string;
 
+  guestsByExcursion: Record<string, Guest[]> = {};
+  loadingGuests: Record<string, boolean> = {};
+  errorByExcursion: Record<string, string> = {};
+  expanded: Record<string, boolean> = {};
+
   formData: Excursion = {
     name: '',
     date: '',
@@ -37,20 +44,14 @@ export class ExcursionListComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private cruiseService: CruiseService,
-    private userService: UserService // <-- СМЯНА
+    private userService: UserService,
+    private guestService: GuestService
   ) { }
 
   ngOnInit() {
-    // Реактивна проверка за роля
     this.userService.user$.subscribe(user => {
       this.isAdmin = user?.role === 'admin';
       this.userRole = user?.role;
-      console.log('Потребителят админ ли е?', this.isAdmin);
-      if (this.userRole) {
-        console.log('Ролята на потребителя е:', this.userRole);
-      } else {
-        console.log('Потребителят няма зададена роля.', this.userRole);
-      }
     });
 
     if (!this.cruiseId) {
@@ -59,6 +60,38 @@ export class ExcursionListComponent implements OnInit {
     if (this.cruiseId) {
       this.loadExcursions();
     }
+  }
+
+  toggleGuests(exId?: string) {
+    if (!exId) return;
+    const safeId = String(exId);
+    const willExpand = !this.expanded[safeId];
+    this.expanded[safeId] = willExpand;
+
+    if (willExpand && !this.guestsByExcursion[safeId]) {
+      this.fetchGuests(safeId);
+    }
+  }
+
+  fetchGuests(exId: string) {
+    const safeId = String(exId);
+    this.loadingGuests[safeId] = true;
+    this.errorByExcursion[safeId] = '';
+
+    this.guestService.getGuestsByExcursionId(safeId).subscribe({
+      next: (gs) => {
+        this.guestsByExcursion[safeId] = (gs || []).map(g => ({
+          ...g,
+          _id: String(g._id)
+        }));
+        this.loadingGuests[safeId] = false;
+      },
+      error: (err) => {
+        this.errorByExcursion[safeId] =
+          err?.error?.error || err?.error?.message || err.message || 'Error';
+        this.loadingGuests[safeId] = false;
+      }
+    });
   }
 
   loadExcursions() {
@@ -77,10 +110,52 @@ export class ExcursionListComponent implements OnInit {
     });
   }
 
+  updateExcursionCapacity(exId: string, newCap: number): void {
+    if (!this.cruiseId || !exId) return;
+
+    this.cruiseService.updateCapacity(this.cruiseId, exId, newCap).subscribe({
+      next: (res: { message: string; capacity: number }) => {
+        // намираме екскурзията и обновяваме локално
+        const ex = this.excursions.find(e => e._id === exId);
+        if (ex) ex.capacity = res.capacity;
+        this.successMsg = 'Капацитетът е обновен успешно!';
+        setTimeout(() => this.successMsg = '', 3000);
+      },
+      error: err => {
+        this.errorMsg = err.error?.message || 'Грешка при обновяване на капацитета!';
+        setTimeout(() => this.errorMsg = '', 3000);
+      }
+    });
+  }
+
+saveCapacity(ex: Excursion, event: Event): void {
+  const input = event.target as HTMLInputElement;
+  let newCap = Number(input.value);
+
+  // Минимум 1, за да няма 0 или отрицателни
+  if (isNaN(newCap) || newCap < 1) {
+    newCap = 1;
+    input.value = '1';
+  }
+
+  this.cruiseService.updateCapacity(this.cruiseId!, ex._id!, newCap).subscribe({
+    next: res => {
+      ex.capacity = newCap; // веднага обновява локалния обект
+      this.successMsg = `Капацитетът е променен на ${newCap}`;
+      setTimeout(() => this.successMsg = '', 3000);
+    },
+    error: err => {
+      this.errorMsg = 'Грешка при запис на капацитет';
+      console.error(err);
+    }
+  });
+}
+
+
+
   submit() {
     if (!this.cruiseId) return;
     if (this.editExcursion) {
-      // Редакция
       this.cruiseService.updateExcursion(
         this.cruiseId,
         this.editExcursion._id!,
@@ -90,6 +165,7 @@ export class ExcursionListComponent implements OnInit {
           fromTime: this.formData.fromTime,
           toTime: this.formData.toTime,
           description: this.formData.description
+
         }
       ).subscribe({
         next: () => {
@@ -105,7 +181,6 @@ export class ExcursionListComponent implements OnInit {
         }
       });
     } else {
-      // Добавяне
       this.cruiseService.addExcursion(
         this.cruiseId,
         {
@@ -132,14 +207,7 @@ export class ExcursionListComponent implements OnInit {
 
   startEdit(ex: Excursion) {
     this.editExcursion = ex;
-    this.formData = {
-      _id: ex._id,
-      name: ex.name,
-      date: ex.date,
-      fromTime: ex.fromTime,
-      toTime: ex.toTime,
-      description: ex.description
-    };
+    this.formData = { ...ex };
   }
 
   deleteExcursion(id: string) {
@@ -158,27 +226,23 @@ export class ExcursionListComponent implements OnInit {
     });
   }
 
-  requestDelete(id: string | undefined) {
+  requestDelete(id?: string) {
     if (!this.cruiseId || !id) return;
-    console.log('Ще изпратя заявка за изтриване:', this.cruiseId, id);
-
     this.cruiseService.requestExcursionDelete(this.cruiseId, id)
       .subscribe({
         next: (res: { message: string }) => {
-          console.log('Отговорът от бекенда:', res);
-
           this.successMsg = res.message || 'Заявката за изтриване е изпратена!';
           this.loadExcursions();
           setTimeout(() => this.successMsg = '', 3000);
         },
         error: err => {
-          console.log('Грешка при заявка за изтриване:', err);
           this.errorMsg = err.error?.message || 'Грешка при заявка за изтриване!';
           setTimeout(() => this.errorMsg = '', 3000);
         }
       });
   }
-  rejectDelete(id: string | undefined) {
+
+  rejectDelete(id?: string) {
     if (!this.cruiseId || !id) return;
     this.cruiseService.rejectExcursionDelete(this.cruiseId, id)
       .subscribe({
