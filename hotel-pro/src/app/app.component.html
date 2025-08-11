@@ -2,10 +2,11 @@
   <!-- Sidebar -->
   <aside class="sidebar" [class.closed]="!sidebarVisible">
     <h2 class="logo" [routerLink]="['/']">Hotel UI</h2>
+
     <nav class="sidebar-nav">
       <ul>
         <!-- Dashboard -->
-        <li class="menu-item active">
+        <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
           <a routerLink="/home">
             <svg class="icon" viewBox="0 0 24 24">
               <path d="M3 12l9-9 9 9-1.5 1.5L12 4.5 4.5 13.5z" />
@@ -19,7 +20,11 @@
 
         <!-- Pages -->
         <li class="menu-item has-sub" [class.open]="openMenu === 'pages'">
-          <button class="submenu-toggle" (click)="toggleMenu('pages')">
+          <button
+            class="submenu-toggle"
+            (click)="toggleMenu('pages')"
+            [attr.aria-expanded]="openMenu === 'pages'"
+            aria-controls="submenu-pages">
             <svg class="icon" viewBox="0 0 24 24">
               <path d="M3 7h18M3 12h18M3 17h18" />
             </svg>
@@ -28,32 +33,40 @@
               <path d="M6 9l6 6 6-6" />
             </svg>
           </button>
-          <ul class="sub-menu">
-            <li><a routerLink="/catalog">Guest-Catalog</a></li>
-            <li><a routerLink="/cruise">Cruises</a></li>
+          <ul class="sub-menu" id="submenu-pages">
+            <li routerLinkActive="active"><a routerLink="/catalog">Guest-Catalog</a></li>
+            <li routerLinkActive="active"><a routerLink="/cruise">Cruises</a></li>
           </ul>
         </li>
 
         <!-- Authentication -->
         <li class="menu-item has-sub" [class.open]="openMenu === 'auth'">
-          <button class="submenu-toggle" (click)="toggleMenu('auth')">
+          <button
+            class="submenu-toggle"
+            (click)="toggleMenu('auth')"
+            [attr.aria-expanded]="openMenu === 'auth'"
+            aria-controls="submenu-auth">
             Authentication
             <svg class="icon-chevron" viewBox="0 0 24 24">
               <path d="M6 9l6 6 6-6" />
             </svg>
           </button>
-          <ul class="sub-menu" *ngIf="!userService.isLogged">
-            <li><a routerLink="/login">Login</a></li>
-            <li><a routerLink="/register">Register</a></li>
+
+          <!-- Гости (не-логнат) -->
+          <ul class="sub-menu" id="submenu-auth" *ngIf="openMenu === 'auth' && !userService.isLogged">
+            <li routerLinkActive="active"><a routerLink="/login">Login</a></li>
+            <li routerLinkActive="active"><a routerLink="/register">Register</a></li>
           </ul>
-          <ul class="sub-menu" *ngIf="userService.isLogged">
-            <li><a routerLink="/profile">My Profile</a></li>
-            <li (click)="logout()">Logout</li>
+
+          <!-- Логнат потребител -->
+          <ul class="sub-menu" *ngIf="openMenu === 'auth' && userService.isLogged">
+            <li routerLinkActive="active"><a routerLink="/profile">My Profile</a></li>
+            <li><button type="button" (click)="logout()">Logout</button></li>
           </ul>
         </li>
 
         <!-- Room -->
-        <li class="menu-item">
+        <li class="menu-item" routerLinkActive="active">
           <a routerLink="/room" fragment="table">
             <svg class="icon" viewBox="0 0 24 24">
               <path d="M3 3h18v8H3zM3 13h18v8H3z" />
@@ -65,9 +78,12 @@
         <li class="section-title">UI COMPONENTS</li>
 
         <!-- Components -->
-        <li class="menu-item has-sub" [class.open]="openMenu === 'pages'">
-          <button class="submenu-toggle" (click)="toggleMenu('pages')" [attr.aria-expanded]="openMenu === 'pages'"
-            aria-controls="submenu-pages">
+        <li class="menu-item has-sub" [class.open]="openMenu === 'components'">
+          <button
+            class="submenu-toggle"
+            (click)="toggleMenu('components')"
+            [attr.aria-expanded]="openMenu === 'components'"
+            aria-controls="submenu-components">
             <svg class="icon" viewBox="0 0 24 24">
               <path d="M4 4h16v16H4z" />
             </svg>
@@ -76,9 +92,8 @@
               <path d="M6 9l6 6 6-6" />
             </svg>
           </button>
-          <ul class="sub-menu" id="submenu-pages">
-            <li><a routerLink="/guest">Accordions</a></li>
-
+          <ul class="sub-menu" id="submenu-components">
+            <li routerLinkActive="active"><a routerLink="/guest">Accordions</a></li>
             <li *ngIf="userService.user?.role === 'admin'">
               <a routerLink="/users">Всички потребители</a>
               <a routerLink="/admin-dashboard">Statistic</a>
@@ -98,26 +113,33 @@
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
         </button>
+
         <div class="nav-center">
           <input type="text" placeholder="Search" class="nav-search" />
         </div>
+
         <div class="nav-actions" *ngIf="userService.isLogged">
           <button class="btn-notif" aria-label="Notifications">🔔</button>
 
-          <div class="nav-profile">
+          <div class="nav-profile" tabindex="0">
             <img
               src="https://static.vecteezy.com/system/resources/previews/019/465/366/original/3d-user-icon-on-transparent-background-free-png.png"
               alt="User" class="profile-img" />
             <span class="status-indicator"></span>
 
-            <ul class="user-dropdown">
-              <button (click)="loadProfile()">Вземи профил</button>
-              <li (click)="logout()">Изход</li>
+            <ul class="user-dropdown" role="menu" aria-label="User menu">
+              <li role="none">
+                <button role="menuitem" type="button" (click)="loadProfile()">Вземи профил</button>
+              </li>
+              <li role="none">
+                <button role="menuitem" type="button" (click)="logout()">Изход</button>
+              </li>
             </ul>
           </div>
         </div>
       </nav>
     </header>
+
     <main class="main">
       <router-outlet></router-outlet>
     </main>

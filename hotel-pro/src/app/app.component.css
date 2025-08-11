@@ -1,3 +1,4 @@
+/* ===== Layout ===== */
 .layout {
   display: flex;
   height: 100vh;
@@ -6,7 +7,7 @@
   font-family: 'Segoe UI', Tahoma, sans-serif;
 }
 
-/* Sidebar */
+/* ===== Sidebar ===== */
 .sidebar {
   width: 240px;
   background: linear-gradient(180deg, #1f2a40, #121826);
@@ -15,7 +16,7 @@
   position: relative;
   z-index: 100;
   overflow-y: hidden;
-  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 4px 0 14px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar:hover {
@@ -30,18 +31,20 @@
   height: 100vh;
 }
 
-/* Scrollbar styling */
 .sidebar::-webkit-scrollbar {
   width: 6px;
 }
+
 .sidebar::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.3);
   border-radius: 3px;
 }
+
 .sidebar::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.5);
 }
 
+/* ===== Content ===== */
 .content {
   flex: 1 1 0%;
   display: flex;
@@ -49,7 +52,7 @@
   min-width: 0;
 }
 
-/* Main content */
+/* ===== Main Content ===== */
 .main {
   flex: 1 1 auto;
   width: 100%;
@@ -59,21 +62,23 @@
   overflow-y: auto;
 }
 
-/* Logo */
+/* ===== Logo ===== */
 .logo {
   font-size: 1.6rem;
   color: #fff;
   font-weight: bold;
   padding: 1.5rem 1rem;
   text-align: center;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
-}
-.logo:hover {
-  background: rgba(255, 255, 255, 0.05);
+  transition: background 0.25s ease;
 }
 
-/* Navigation */
+.logo:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ===== Sidebar Navigation ===== */
 .sidebar-nav ul {
   list-style: none;
   padding: 0;
@@ -96,19 +101,20 @@
   padding: 0.65rem 1rem;
   text-align: left;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background 0.25s ease, transform 0.15s ease;
+  border-radius: 6px;
+  transition: background 0.25s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 
 .menu-item a:hover,
 .menu-item button.submenu-toggle:hover,
 .menu-item.active a {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.12);
   color: #fff;
   transform: translateX(3px);
+  box-shadow: inset 4px 0px 0px #7c8cff;
 }
 
-/* Icons */
+/* ===== Icons ===== */
 .icon {
   width: 20px;
   height: 20px;
@@ -128,7 +134,7 @@
   transform: rotate(180deg);
 }
 
-/* Section titles */
+/* ===== Section Titles ===== */
 .section-title {
   margin: 1rem 0 0.5rem 1rem;
   font-size: 0.75rem;
@@ -137,7 +143,7 @@
   text-transform: uppercase;
 }
 
-/* Sub-menus - animated open/close */
+/* ===== Sub-menus ===== */
 .sub-menu {
   list-style: none;
   padding-left: 2rem;
@@ -150,7 +156,7 @@
 }
 
 .has-sub.open .sub-menu {
-  max-height: 500px; /* достатъчно голямо за всички елементи */
+  max-height: 500px;
   opacity: 1;
   pointer-events: auto;
 }
@@ -159,23 +165,13 @@
   margin-bottom: 0.4rem;
 }
 
-.sub-menu.long {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.sub-menu.long::-webkit-scrollbar {
-  width: 4px;
-}
-.sub-menu.long::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 2px;
-}
-
-/* Topbar */
-.topbar {
+/* ===== Topbar ===== */
+.topbar,
+header {
+  position: relative;
   background: linear-gradient(90deg, #6b46c1, #805ad5);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 2000;
 }
 
 .top-nav {
@@ -219,6 +215,7 @@
   background: rgba(255, 255, 255, 0.2);
   color: white;
 }
+
 .nav-search::placeholder {
   color: rgba(255, 255, 255, 0.8);
 }
@@ -236,24 +233,29 @@
   padding: 0.45rem;
   font-size: 1.1rem;
   cursor: pointer;
-  transition: background 0.25s ease, transform 0.15s ease;
+  transition: background 0.25s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
+
 .btn-notif:hover {
   background: #eee;
   transform: scale(1.1);
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.15);
 }
 
-/* Profile dropdown */
+/* ===== Profile Dropdown ===== */
 .nav-profile {
   position: relative;
   cursor: pointer;
+  z-index: 2001;
 }
+
 .profile-img {
   width: 38px;
   height: 38px;
   border-radius: 50%;
   border: 2px solid white;
 }
+
 .status-indicator {
   position: absolute;
   bottom: 2px;
@@ -280,6 +282,7 @@
   pointer-events: none;
   transform: translateY(-10px);
   transition: all 0.25s ease;
+  z-index: 2100;
 }
 
 .nav-profile:hover .user-dropdown {
@@ -293,6 +296,7 @@
   cursor: pointer;
   transition: background 0.2s ease;
 }
+
 .user-dropdown li:hover {
   background: #f5f5f5;
 }
