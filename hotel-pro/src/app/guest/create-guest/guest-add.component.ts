@@ -9,12 +9,14 @@ import { CommonModule } from '@angular/common';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CruiseService } from '../../services/cruise.service';
+import { VipServicesPickerComponent } from '../vip/vip-services-picker.component copy';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-guest-add',
   templateUrl: './guest-add.component.html',
   styleUrls: ['./guest-add.component.css'],
-  imports: [FormsModule, CommonModule, RouterModule, NgSelectModule],
+  imports: [FormsModule, CommonModule, RouterModule, NgSelectModule,VipServicesPickerComponent],
 })
 export class GuestAddComponent implements OnInit {
   guest: Guest = {
@@ -37,6 +39,7 @@ export class GuestAddComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router,
     private guestService: GuestService,
     private cruiseService: CruiseService,
+    public userService: UserService,
     private snackBar: MatSnackBar
   ) { }
 

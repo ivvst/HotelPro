@@ -29,6 +29,10 @@
     <label>Cruise ID</label>
     <input name="cruiseId" [value]="guest.cruiseId" disabled />
 
+    <app-vip-services-picker [(isVip)]="guest.isVIP" [services]="guest.vipServices || []"
+      (servicesChange)="guest.vipServices = $event" [canManage]="userService.user?.role === 'admin'">
+    </app-vip-services-picker>
+
     <label>Picture (Google Drive/Dropbox URL):</label>
     <input name="picture" [(ngModel)]="guest.picture" placeholder="https://..." />
 

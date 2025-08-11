@@ -70,6 +70,22 @@ export class CruiseService {
     return this.http.put<any>(`${this.apiUrl}/${cruiseId}/excursions/${excursionId}`, excursion);
   }
 
+  // cruise.service.ts
+  enrollGuest(cruiseId: string, excursionId: string, guestId: string) {
+    const url = `${this.apiUrl}/${cruiseId}/${excursionId}/enroll/${guestId}`;
+    return this.http.post<{ message: string; excursion?: { _id: string; name: string } }>(url, {});
+  }
+
+
+  /** PATCH /api/cruises/:cruiseId/excursions/:excursionId/capacity  { capacity } */
+  updateCapacity(cruiseId: string, excursionId: string, capacity: number) {
+    return this.http.patch<{ message: string; capacity: number }>(
+      `${this.apiUrl}/${cruiseId}/excursions/${excursionId}/capacity`,
+      { capacity }
+    );
+  }
+
+
   deleteExcursion(cruiseId: string, excursionId: string): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${cruiseId}/excursions/${excursionId}`);
   }

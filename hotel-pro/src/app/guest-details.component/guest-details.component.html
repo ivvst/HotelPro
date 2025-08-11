@@ -1,40 +1,124 @@
 <div class="guest-details-card" *ngIf="guest as g">
-    <h2>{{ g.firstName }} {{ g.lastName }}</h2>
-    <!-- <img [src]="g?.picture" alt="Profile picture" class="profile-picture" /> -->
+  <h2>{{ g.firstName }} {{ g.lastName }}</h2>
 
-    <div class="g-info">
-        <div><b>Стая:</b> {{ g?.roomNumber }}</div>
-        <div><b>Престой:</b> {{ g?.stayFrom }} - {{ g?.stayTo }}</div>
-        <!-- <div><b>VIP:</b> {{ g.isVIP ? 'Да' : 'Не' }}</div> -->
-        <!-- <div *ngIf="g.vipServices?.length"><b>VIP услуги:</b> {{ g.vipServices.join(', ') }}</div> -->
-        <div><b>Круиз:</b> {{ cruise?.name }}</div>
-        <div *ngIf="guest">
-            <h3>Екскурзии към госта:</h3>
-            <ul>
-                <li *ngFor="let ex of guest.excursions">
-                    {{ ex.name }}
-                </li>
-            </ul>
-        </div>
+  <!-- статус съобщение -->
+  <div class="status" *ngIf="infoMsg">
+    {{ infoMsg }}
+  </div>
 
+  <div class="g-info">
+    <div><b>Стая:</b> {{ g.roomNumber }}</div>
+    <div><b>Престой:</b> {{ g.stayFrom }} – {{ g.stayTo }}</div>
+    <div><b>Круиз:</b> {{ cruise?.name || '—' }}</div>
+  </div>
+
+  <!-- VIP секция -->
+  <div class="vip-card">
+    <div class="vip-header">
+      <span class="vip-badge" [class.enabled]="vipEnabled">VIP</span>
+      <span class="vip-title">VIP услуги</span>
     </div>
 
-    <hr />
+    <ng-container *ngIf="vipEnabled; else vipDisabled">
+      <ng-container *ngIf="(vipServices?.length || 0) > 0; else noVipServices">
+        <ul class="vip-list">
+          <li *ngFor="let s of vipServices" class="vip-chip">{{ s }}</li>
+        </ul>
+      </ng-container>
+    </ng-container>
 
-    <h3>Екскурзии</h3>
-    <div *ngIf="cruise && guest">
-        <label>Добави екскурзия:</label>
-        <select [(ngModel)]="selectedExcursionId">
-            <option [ngValue]="null" disabled selected>Избери екскурзия</option>
-            <option *ngFor="let ex of cruise.excursions" [disabled]="isGuestAlreadyAddedToExcursion(guest, ex._id)"
-                [ngValue]="ex._id">
-                {{ ex.name }}
-            </option>
-        </select>
-        <button (click)="addExcursionToGuest()"
-            [disabled]="!selectedExcursionId || isGuestAlreadyAddedToExcursion(guest, selectedExcursionId)">
-            Добави
+    <ng-template #vipDisabled>
+      <div class="muted">VIP режимът не е активен за този гост.</div>
+    </ng-template>
+
+    <ng-template #noVipServices>
+      <div class="muted">Няма избрани VIP услуги.</div>
+    </ng-template>
+  </div>
+
+  <!-- Списък с екскурзии към госта -->
+  <div *ngIf="g.excursions?.length; else noExcursions">
+    <h3 class="section-title">Екскурзии към госта</h3>
+    <ul class="excursion-list">
+      <li *ngFor="let ex of g.excursions" class="excursion-item">
+        <span class="excursion-name">{{ ex.name }}</span>
+        <button class="btn-remove" [disabled]="loading" (click)="openConfirm(ex)" title="Премахни екскурзията"
+          [attr.aria-label]="'Премахни ' + ex.name">
+          ❌
         </button>
+      </li>
+    </ul>
+  </div>
+  <ng-template #noExcursions>
+    <div class="empty-msg">Няма записани екскурзии.</div>
+  </ng-template>
+
+  <!-- backdrop -->
+  <div class="confirm-backdrop" *ngIf="confirmOpen" (click)="closeConfirm()"></div>
+
+  <!-- confirm modal -->
+  <div class="confirm-modal" *ngIf="confirmOpen" [attr.role]="'dialog'" [attr.aria-modal]="'true'"
+    [attr.aria-labelledby]="'confirm-title'">
+    <div class="confirm-head">
+      <h3 id="confirm-title">Потвърждение</h3>
+    </div>
+    <p>
+      Сигурни ли сте, че искате да премахнете екскурзия:
+      <b>{{ confirmExName }}</b>?
+    </p>
+    <div class="modal-actions">
+      <button class="btn-secondary" type="button" (click)="closeConfirm()">Отказ</button>
+      <button class="btn-danger" type="button" [disabled]="loading" (click)="confirmDelete()">Да, премахни</button>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- Добавяне на екскурзия -->
+  <h3 class="section-title">Добави екскурзия</h3>
+  <div *ngIf="cruise && cruise.excursions?.length; else noCruiseExcursions" class="add-row">
+    <div class="select-wrap">
+      <div class="select-label" id="excursion-select-label">Избери екскурзия</div>
+      <select [(ngModel)]="selectedExcursionId" [disabled]="loading" [attr.aria-labelledby]="'excursion-select-label'">
+        <option [ngValue]="null" disabled>-- Избери екскурзия --</option>
+        <option *ngFor="let ex of cruise.excursions" [disabled]="isGuestAlreadyAddedToExcursion(g, ex._id!)"
+          [ngValue]="ex._id">
+          {{ ex.name }}
+        </option>
+      </select>
+
+      <div class="hint">
+        ⚑ Ако екскурзията е пълна, ще бъдете добавени в списъка с чакащи.
+        <span *ngIf="vipEnabled"> (VIP гостите се записват директно.)</span>
+
+        <!-- ПОПРАВЕНО: показваме данни за избраната екскурзия -->
+        <ng-container *ngIf="getExcursionById(selectedExcursionId) as selEx">
+          <span class="metrics">
+            <span class="metric">
+              <span class="label">• Капацитет:</span>
+              <span class="value capacity">{{ selEx.capacity || 0 }}</span>
+            </span>
+            <span class="metric">
+              <span class="label">• Чакащи:</span>
+              <span class="value waitlist" [class.zero]="(selEx.waitlist?.length || 0) === 0">
+                {{ selEx.waitlist?.length || 0 }}
+              </span>
+            </span>
+          </span>
+        </ng-container>
+      </div>
     </div>
 
+    <button class="btn-primary" (click)="addExcursionToGuest()"
+      [disabled]="loading || !selectedExcursionId || isGuestAlreadyAddedToExcursion(g, selectedExcursionId!)"
+      [attr.aria-live]="'polite'">
+      <span class="btn-ic" *ngIf="!loading">➕</span>
+      <span class="btn-ic" *ngIf="loading">⏳</span>
+      <span class="btn-txt">{{ loading ? 'Моля, изчакайте…' : 'Добави' }}</span>
+    </button>
+  </div>
+
+  <ng-template #noCruiseExcursions>
+    <div class="empty-msg">Няма налични екскурзии за този круиз.</div>
+  </ng-template>
 </div>

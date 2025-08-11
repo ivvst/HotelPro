@@ -21,6 +21,13 @@ export class GuestService {
         return this.http.get<Guest>(`${this.apiUrl}/${id}`);
     }
 
+    getGuestsByExcursionId(excursionId: string) {
+        return this.http.get<Guest[]>(`${this.apiUrl}`, {
+            params: { excursionId }
+        });
+    }
+
+
     /** Create a new guest */
     createGuest(guest: Guest): Observable<Guest> {
         return this.http.post<Guest>(this.apiUrl, guest);
@@ -35,14 +42,13 @@ export class GuestService {
     deleteGuest(id: string): Observable<{ message: string }> {
         return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
     }
-    addExcursionToGuest(guestId: string, excursion: { _id: string, name: string }) {
-        return this.http.patch<Guest>(`${this.apiUrl}/${guestId}/excursions`, excursion);
+    addExcursionToGuest(guestId: string, payload: { _id: string; name: string }) {
+        return this.http.patch<Guest>(`${this.apiUrl}/${guestId}/excursions`, payload, { withCredentials: true });
     }
-    // addExcursionToGuest(guestId: string, excursion: { _id: string, name: string }) {
-    //     return this.http.patch<Guest>(`${this.apiUrl}/${guestId}/excursions`, excursion);
-    // }
-    // Премахни екскурзия от гост
-    removeExcursionFromGuest(guestId: string, excursionId: string): Observable<Guest> {
-        return this.http.delete<Guest>(`${this.apiUrl}/${guestId}/excursions/${excursionId}`);
+
+
+
+    removeExcursionFromGuest(guestId: string, excursionId: string) {
+        return this.http.delete<Guest>(`${this.apiUrl}/${guestId}/excursions/${excursionId}`, { withCredentials: true });
     }
 }

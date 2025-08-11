@@ -1,0 +1,51 @@
+<div class="vip-section">
+  <div class="vip-row">
+    <label class="vip-switch">
+      <input type="checkbox" [ngModel]="isVip" (ngModelChange)="toggleVip($event)" />
+      <span>VIP гост</span>
+    </label>
+
+    <span class="muted" *ngIf="loading">Зареждане…</span>
+    <span class="error" *ngIf="error">{{ error }}</span>
+  </div>
+
+  <ng-container *ngIf="isVip">
+    <!-- каталожни услуги (динамични) -->
+    <div class="vip-presets" *ngIf="catalog?.length">
+      <div class="preset-label">VIP услуги (бърз избор):</div>
+      <div class="chips">
+        <button
+          type="button"
+          class="chip"
+          *ngFor="let item of catalog"
+          [class.selected]="services.includes(item.name)"
+          (click)="toggleFromCatalog(item)">
+          {{ item.name }}
+          <span *ngIf="canManage" class="chip-x" title="Изтрий от каталог"
+                (click)="$event.stopPropagation(); removeFromCatalog(item)">✕</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- админ: добавяне в каталога -->
+    <div class="vip-add" *ngIf="canManage">
+      <input type="text"
+             [(ngModel)]="newCatalogItem"
+             placeholder="Добави нова VIP услуга в каталога…"
+             (keyup.enter)="addToCatalog()"/>
+      <button type="button" class="btn-add" (click)="addToCatalog()">Добави в каталог</button>
+    </div>
+
+    <!-- вече избрани за госта -->
+    <div class="vip-selected" *ngIf="services.length">
+      <div class="selected-label">Избрани услуги за госта:</div>
+      <ul class="selected-list">
+        <li *ngFor="let s of services" class="selected-item">
+          <span>{{ s }}</span>
+          <button type="button" class="btn-x"
+                  (click)="toggleFromCatalog({ _id: '', name: s })">✕</button>
+        </li>
+      </ul>
+    </div>
+  </ng-container>
+</div>
