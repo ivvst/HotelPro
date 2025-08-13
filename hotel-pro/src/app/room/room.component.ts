@@ -37,15 +37,6 @@ export class RoomComponent implements OnInit {
   }
 
   get roomsStats(): RoomsStats[] {
-    console.log(this.rooms.map(room => {
-      const guestsInRoom = this.filteredGuests.filter(g => g.roomNumber.toString() == room.number);
-      return {
-        ...room,
-        guestCount: guestsInRoom.length,
-        isVip: guestsInRoom.some(g => g.isVIP)
-      };
-    }));
-
     return this.rooms.map(room => {
       const guestsInRoom = this.filteredGuests.filter(g => g.roomNumber.toString() == room.number);
       return {
@@ -61,12 +52,28 @@ export class RoomComponent implements OnInit {
     this.expandedGuestId = this.expandedGuestId === guestId ? null : guestId;
   }
 
-  get rhineRooms(): RoomsStats[] {
-    return this.roomsStats.filter(r => r.deck === 'rhine');
+  get rhineEvenRooms(): RoomsStats[] {
+    return this.roomsStats
+      .filter(r => r.deck === 'rhine' && +r.number % 2 === 0)
+      .sort((a, b) => +a.number - +b.number);
   }
 
-  get mainRooms(): RoomsStats[] {
-    return this.roomsStats.filter(r => r.deck === 'main');
+  get rhineOddRooms(): RoomsStats[] {
+    return this.roomsStats
+      .filter(r => r.deck === 'rhine' && +r.number % 2 !== 0)
+      .sort((a, b) => +a.number - +b.number);
+  }
+
+  get mainEvenRooms(): RoomsStats[] {
+    return this.roomsStats
+      .filter(r => r.deck === 'main' && +r.number % 2 === 0)
+      .sort((a, b) => +a.number - +b.number);
+  }
+
+  get mainOddRooms(): RoomsStats[] {
+    return this.roomsStats
+      .filter(r => r.deck === 'main' && +r.number % 2 !== 0)
+      .sort((a, b) => +a.number - +b.number);
   }
 
   constructor(
