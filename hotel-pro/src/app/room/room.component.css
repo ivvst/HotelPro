@@ -1,10 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 .deck-rows {
   display: flex;
   flex-direction: column;
 }
 
 .row {
-   display: flex;
+  display: flex;
   gap: 4px;
 }
 
@@ -31,6 +33,7 @@
 .room:hover .top {
   display: block;
 }
+
 .room .middle {
   font-weight: bold;
   transition: transform 0.2s ease;
@@ -73,17 +76,32 @@
 }
 
 /* Цветови класове */
-.room.yellow { background-color: #ffff99; }
-.room.blue   { background-color: #99ccff; }
-.room.red    { background-color: #ff9999; }
-.room.gray   { background-color: #dddddd; }
-.room.green  { background-color: #c0ffc0; }
+.room.yellow {
+  background-color: #ffff99;
+}
+
+.room.blue {
+  background-color: #99ccff;
+}
+
+.room.red {
+  background-color: #ff9999;
+}
+
+.room.gray {
+  background-color: #dddddd;
+}
+
+.room.green {
+  background-color: #c0ffc0;
+}
 
 .room.label {
   background-color: transparent;
   border: none;
   font-weight: bold;
 }
+
 /* Edit Button */
 .edit-btn {
   margin-left: 14px;
@@ -99,22 +117,185 @@
   display: inline-flex;
   align-items: center;
 }
+
 .edit-btn:hover {
   background: #ffd54f;
 }
+
 .edit-btn .icon {
   margin-right: 6px;
   font-size: 1.1em;
 }
+
 .modal-guest {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 8px;
 }
+
 .modal-actions {
   margin-top: 18px;
   display: flex;
   gap: 12px;
   justify-content: flex-end;
+}
+
+/* ==== Карта на гост — финална версия ==== */
+.guest-card {
+  width: 420px;
+  min-height: 100px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  display: flex;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+  margin: 1rem 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.guest-card:hover {
+  transform: translateY(-3px);
+}
+
+/* Лява част със снимка */
+.guest-card .additional {
+  flex: 0 0 140px;
+  background: linear-gradient(135deg, #86c8a5, #a2ccb6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem;
+}
+
+.user-card {
+  text-align: center;
+}
+
+.user-card img {
+  width: 85px;
+  height: 85px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.user-card .level {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.15);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+/* Дясната част */
+.more-info {
+  flex: 1;
+  padding: 1rem;
+  color: #224C36;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  max-height: 45px;
+  /* Collapsed */
+}
+
+.guest-card.expanded .more-info {
+  max-height: 500px;
+  /* Expanded */
+}
+
+/* Заглавие (име) */
+.more-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* Редове с данни */
+.more-info p {
+  margin: 0;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Скриваме подробности, когато е collapsed */
+.more-info .details {
+  display: none;
+}
+
+.guest-card.expanded .more-info .details {
+  display: block;
+}
+
+/* Иконки */
+.more-info p b {
+  color: #184065;
+}
+
+.more-info .room-info::before {
+  content: "🚪";
+}
+
+.more-info .nat-info::before {
+  content: "🌍";
+}
+
+.more-info .birth-info::before {
+  content: "🎂";
+}
+
+.more-info .email-info::before {
+  content: "✉️";
+}
+
+/* Бутон */
+.edit-btn {
+  margin-top: 8px;
+  background: #ffe082;
+  color: #184065;
+  border: none;
+  border-radius: 7px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 6px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background 0.14s ease;
+}
+
+.edit-btn:hover {
+  background: #ffd54f;
+}
+
+.edit-btn .icon {
+  font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .guest-card {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .guest-card .additional {
+    flex: none;
+    width: 100%;
+    height: auto;
+  }
+
+  .more-info {
+    max-height: none;
+  }
 }

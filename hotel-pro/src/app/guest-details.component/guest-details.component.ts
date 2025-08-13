@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
 import { GuestService } from '../services/guest.service';
@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './guest-details.component.html',
   styleUrl: './guest-details.component.css',
   standalone: true,
-  imports: [FormsModule, CommonModule]
+  imports: [FormsModule, CommonModule,RouterLink]
 })
 export class GuestDetailsComponent implements OnInit {
   guest: Guest | null = null;
@@ -82,6 +82,8 @@ export class GuestDetailsComponent implements OnInit {
     if (!exId || !guest?.excursions) return false;
     return guest.excursions.some(gex => String(gex._id) === String(exId));
   }
+
+  
 
   /** Централизиран рефреш след промяна: презарежда госта и круиза и показва статус */
   private refreshAfterChange(changedExId: string) {

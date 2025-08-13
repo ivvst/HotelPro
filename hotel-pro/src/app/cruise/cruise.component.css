@@ -87,3 +87,167 @@ button[disabled] {
   font-weight: bold;
   color: #2c3e50;
 }
+/* Детайли на круиз */
+.cruise-details {
+  margin-top: 12px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.06);
+  padding: 18px 18px 22px;
+}
+
+.cd-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.cd-title h3 {
+  margin: 0 0 4px 0;
+  color: #1a2b4f;
+}
+
+.cd-badge {
+  display: inline-block;
+  font-size: 12px;
+  color: #415a77;
+  background: #edf2f7;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.cd-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Статистики */
+.cd-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 10px 0 14px;
+}
+
+.cd-card {
+  background: #f7f9fc;
+  border: 1px solid #e3e9f2;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.cd-label {
+  font-size: 12px;
+  color: #5a6b85;
+  margin-bottom: 6px;
+  letter-spacing: .2px;
+}
+
+.cd-value {
+  font-size: 1.05rem;
+  color: #102a43;
+  font-weight: 600;
+}
+
+/* Прогрес в карта */
+.cd-progress {
+  width: 100%;
+  height: 10px;
+  background: #e6ecf4;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.cd-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #6b46c1 0%, #805ad5 100%);
+  transition: width .3s;
+}
+.cd-progress-num {
+  font-size: 12px;
+  color: #4535a2;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+/* Форма за редакция */
+.cd-form {
+  background: #fbfcff;
+  border: 1px solid #e7ecf3;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.cd-form .row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.cd-form label {
+  color: #174170;
+  font-size: 0.95rem;
+}
+
+.cd-form input {
+  border-radius: 8px;
+  border: 1px solid #c6d3e2;
+  padding: 7px 10px;
+  font-size: 1rem;
+}
+
+.cd-form .form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* Подзаглавие */
+.cd-subtitle {
+  margin: 14px 0 8px;
+  color: #174170;
+}
+
+/* Бутони – използваме същите варианти като при екскурзиите */
+.cruise-details .btn { /* базов */
+  padding: 7px 13px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color .18s, border-color .18s, transform .05s;
+}
+.cruise-details .btn:active { transform: translateY(1px); }
+
+.cruise-details .btn-edit {
+  background: #e3f0ff;
+  color: #185999;
+  border-color: #c7defc;
+}
+.cruise-details .btn-edit:hover { background: #d7e9ff; }
+
+.cruise-details .btn-danger {
+  background: #ffe4e5;
+  color: #b21616;
+  border-color: #ffc7cb;
+}
+.cruise-details .btn-danger:hover { background: #ffd6d8; }
+
+.cruise-details .btn-ghost {
+  background: #f3f4f6;
+  color: #374151;
+  border-color: #e5e7eb;
+}
+.cruise-details .btn-ghost:hover { background: #e9eaee; }
+
+/* Responsive */
+@media (max-width: 720px) {
+  .cd-grid { grid-template-columns: 1fr; }
+  .cd-form .row { grid-template-columns: 1fr; }
+}

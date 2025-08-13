@@ -184,3 +184,197 @@ h3 {
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
   outline: none;
 }
+
+/* Контейнер за действията – подравняване и разстояния */
+.exc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;           /* хоризонтален и вертикален gap */
+  align-items: center;
+}
+
+/* Базов стил за бутони в екскурзии */
+.exc-actions .btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color .18s, border-color .18s, transform .05s;
+  line-height: 1.1;
+}
+
+.exc-actions .btn:active {
+  transform: translateY(1px);
+}
+
+/* Варианти */
+.exc-actions .btn-edit {
+  background: #e3f0ff;
+  color: #185999;
+  border-color: #c7defc;
+}
+.exc-actions .btn-edit:hover { background: #d7e9ff; }
+
+.exc-actions .btn-danger {
+  background: #ffe4e5;
+  color: #b21616;
+  border-color: #ffc7cb;
+}
+.exc-actions .btn-danger:hover { background: #ffd6d8; }
+
+.exc-actions .btn-warning {
+  background: #fff2df;
+  color: #8a4b00;
+  border-color: #ffe0b3;
+}
+.exc-actions .btn-warning:hover { background: #ffe9cc; }
+
+.exc-actions .btn-ghost {
+  background: #f3f4f6;
+  color: #374151;
+  border-color: #e5e7eb;
+}
+.exc-actions .btn-ghost:hover { background: #e9eaee; }
+
+/* Текстът за „изчаква одобрение“ – малко отстояние от бутоните */
+.flag-delete-text {
+  margin-left: 4px;
+  color: #c53b00;
+  font-size: 0.95em;
+  font-style: italic;
+}
+/* по-четим header и sticky */
+.exc-thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #edf2f7;
+}
+
+/* редове: ховър и леки разделители */
+.exc-row {
+  transition: background-color .15s, box-shadow .15s;
+}
+.exc-row:hover {
+  background: #f9fbff;
+}
+.exc-row.row-flagged {
+  box-shadow: inset 4px 0 0 #ff8a80;
+}
+
+/* име и баджове */
+.ex-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ex-name {
+  font-weight: 600;
+  color: #12263a;
+}
+
+/* малки „чипове“ */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1.2;
+  border: 1px solid transparent;
+}
+.chip-info {
+  background: #e8f1ff;
+  color: #185999;
+  border-color: #c7defc;
+}
+.chip-warn {
+  background: #fff6e5;
+  color: #8a4b00;
+  border-color: #ffe0b3;
+}
+.chip-danger {
+  background: #ffe7e8;
+  color: #b21616;
+  border-color: #ffc7cb;
+}
+
+/* описанието се реже красиво, но с tooltip (title) показва пълния текст */
+.desc {
+  display: inline-block;
+  max-width: 360px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* група действия в реда */
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+/* вторичен бутон */
+.btn.btn-secondary {
+  background: #eef2f7;
+  color: #1f2a44;
+  border: 1px solid #d8e0eb;
+}
+.btn.btn-secondary:hover { background: #e6ebf3; }
+
+/* без чупене на време/дата */
+.nowrap { white-space: nowrap; }
+
+/* малко по-приятен overlay */
+.loading-overlay {
+  background: #f7f9fc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #475569;
+  text-align: center;
+}
+
+/* списък гости */
+.guest-list {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+.muted { color: #6b7280; }
+
+/* responsiveness: таблицата става „карти“ на мобилно */
+@media (max-width: 720px) {
+  .exc-table,
+  .exc-table thead,
+  .exc-table tbody,
+  .exc-table th,
+  .exc-table td,
+  .exc-table tr { display: block; }
+
+  .exc-table thead { display: none; }
+
+  .exc-table tr {
+    margin-bottom: 12px;
+    border: 1px solid #e3e9f2;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .exc-table td {
+    border-bottom: 1px solid #eef2f7;
+    padding: 10px 12px;
+  }
+  .exc-table td:last-child { border-bottom: none; }
+
+  .desc { max-width: 100%; }
+
+  .row-actions, .exc-actions { gap: 8px; }
+}
+

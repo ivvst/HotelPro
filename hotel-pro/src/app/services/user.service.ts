@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subscription, tap } from 'rxjs';
-import { User, UserForAuth } from '../types/user';
+import { User, UserDetailed, UserForAuth } from '../types/user';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -111,14 +111,13 @@ export class UserService implements OnDestroy {
   }
   /** Вземане на профил */
   getProfileInfo() {
-    return this.http.get<UserForAuth>(
+    return this.http.get<UserDetailed>(
       `${this.apiUrl}/users/profile`,
       { withCredentials: true }
     ).pipe(
-      tap((user) => this.setUser(user))
+      tap((user) => this.setUser(user)) // ОК е: UserDetailed е подтип на UserForAuth
     );
   }
-
   /** Обновяване на профил */
   updateProfile(username: string, email: string, role?: 'user' | 'admin') {
     return this.http.put<UserForAuth>(

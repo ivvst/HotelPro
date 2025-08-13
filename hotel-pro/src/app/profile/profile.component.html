@@ -1,0 +1,65 @@
+<div class="profile-page">
+  <div class="profile-card">
+    <div class="profile-header">
+      <h2 class="profile-title">Профил</h2>
+      <button class="btn" (click)="fetchProfile()" [disabled]="loading">
+        {{ loading ? 'Зареждане…' : 'Презареди' }}
+      </button>
+    </div>
+
+    <ng-container *ngIf="user as u; else noUser">
+      <!-- Хедър с аватар и основна идентичност -->
+      <div style="display:flex; align-items:center; gap:14px; margin:8px 0 14px;">
+        <img *ngIf="u.avatar" [src]="u.avatar" alt="Avatar" class="profile-avatar" />
+        <div>
+          <div class="profile-title m-0" style="font-size:1.25rem;">
+            {{ (u.firstName || '') + ' ' + (u.lastName || '') | trim }}
+            <ng-container *ngIf="!u.firstName && !u.lastName">{{ u.username }}</ng-container>
+          </div>
+          <div class="field-label">{{ u.email }}</div>
+          <span *ngIf="u.role" class="chip chip-info" style="margin-top:6px; display:inline-block;">
+            Роля: {{ u.role }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Детайли в мрежа -->
+      <div class="profile-info">
+        <div class="profile-row" *ngIf="u.username">
+          <div class="field-label">Потребител</div>
+          <div class="field-value">{{ u.username }}</div>
+        </div>
+        <div class="profile-row" *ngIf="u.email">
+          <div class="field-label">Имейл</div>
+          <div class="field-value">{{ u.email }}</div>
+        </div>
+        <div class="profile-row" *ngIf="u.firstName || u.lastName">
+          <div class="field-label">Име</div>
+          <div class="field-value">{{ u.firstName }} {{ u.lastName }}</div>
+        </div>
+        <div class="profile-row" *ngIf="u._id">
+          <div class="field-label">ID</div>
+          <div class="field-value">{{ u._id }}</div>
+        </div>
+        <div class="profile-row" *ngIf="u.createdAt">
+          <div class="field-label">Регистриран</div>
+          <div class="field-value">{{ u.createdAt | date:'medium' }}</div>
+        </div>
+        <div class="profile-row" *ngIf="u.updatedAt">
+          <div class="field-label">Обновен</div>
+          <div class="field-value">{{ u.updatedAt | date:'medium' }}</div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #noUser>
+      <div *ngIf="error; else empty" class="alert alert--error">{{ error }}</div>
+      <ng-template #empty>
+        <div class="alert alert--empty">Няма данни за профила.</div>
+      </ng-template>
+      <button class="btn btn--ghost mt-12" (click)="fetchProfile()" [disabled]="loading">
+        Опитай отново
+      </button>
+    </ng-template>
+  </div>
+</div>

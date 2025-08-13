@@ -1,4 +1,13 @@
 <div class="guest-details-card" *ngIf="guest as g">
+
+  <div class="back-btn-wrap" *ngIf="g.cruiseId">
+    <a class="btn-back" [routerLink]="['/catalog']" [queryParams]="{ cruise: g.cruiseId }"
+      aria-label="Назад към каталога">
+      ⬅ Назад към каталога
+    </a>
+  </div>
+
+
   <h2>{{ g.firstName }} {{ g.lastName }}</h2>
 
   <!-- статус съобщение -->

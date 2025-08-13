@@ -1,0 +1,32 @@
+<!-- src/app/notify/notify-dropdown.component.html -->
+<div class="notif-dropdown" [class.open]="open">
+  <h4>{{ isAdmin ? 'Админ задачи' : 'Моите задачи' }}</h4>
+
+  <ul>
+    <li *ngFor="let t of tasks">
+      <ng-container *ngIf="isAdmin; else userView">
+        <div>
+          {{ t.text }}
+          <small>— {{ t.username }}<span *ngIf="t.role"> ({{ t.role }})</span></small>
+        </div>
+        <span *ngIf="t.done">✅</span>
+      </ng-container>
+
+      <ng-template #userView>
+        <label>
+          <input type="checkbox" [disabled]="t.done" (change)="markAsDone(t)" />
+          {{ t.text }}
+        </label>
+      </ng-template>
+    </li>
+  </ul>
+
+  <div *ngIf="isAdmin" class="task-input">
+    <input type="text" [(ngModel)]="newTaskText" placeholder="Нова задача..." />
+    <select [(ngModel)]="selectedUserId">
+      <option value="">-- Избери потребител --</option>
+      <option *ngFor="let u of users" [value]="u._id">{{ u.username }}</option>
+    </select>
+    <button (click)="addTask()">Добави</button>
+  </div>
+</div>

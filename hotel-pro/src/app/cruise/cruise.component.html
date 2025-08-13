@@ -2,6 +2,8 @@
   <h2>Cruises</h2>
   <button (click)="addCruise()">Add Cruise</button>
 
+
+
   <!-- Ако няма избран круиз: Показваме таблицата -->
 
   <div *ngIf="!selectedCruise()">
@@ -33,6 +35,7 @@
           <td>
             <button (click)="checkGuests(cruise._id)">Show guests</button>
             <button (click)="showDetails(cruise)">Details</button>
+
           </td>
         </tr>
       </tbody>
@@ -49,17 +52,67 @@
   </div>
 
   <!-- Ако има избран круиз: Показваме детайлите -->
-  <div *ngIf="selectedCruise()">
-    <h3>Details for {{ selectedCruise()?.name }}</h3>
-    <p><b>ID:</b> {{ selectedCruise()?._id }}</p>
-    <p><b>Start Date:</b> {{ selectedCruise()?.startDate }}</p>
-    <p><b>End Date:</b> {{ selectedCruise()?.endDate }}</p>
-    <p><b>Excursions:</b> {{ getExcursionCount(selectedCruise()!) }}</p>
-    <p><b>Guests:</b> {{ getGuestCount(selectedCruise()?._id) }} / {{ MAX_GUESTS }}</p>
+  <div *ngIf="selectedCruise()" class="cruise-details">
+    <div class="cd-header">
+      <div class="cd-title">
+        <h3>{{ selectedCruise()!.name }}</h3>
+        <span class="cd-badge">ID: {{ selectedCruise()!._id }}</span>
+      </div>
+      <div class="cd-actions">
+        <button *ngIf="!editMode" class="btn btn-edit" (click)="startEdit(selectedCruise()!)">Редактирай</button>
+        <button class="btn btn-danger" (click)="confirmDeleteCruise(selectedCruise()!)">Изтрий</button>
+        <button class="btn btn-ghost" (click)="backToCruises()">Назад</button>
+      </div>
+    </div>
+
+    <div class="cd-grid">
+      <div class="cd-card">
+        <div class="cd-label">Период</div>
+        <div class="cd-value">
+          {{ selectedCruise()!.startDate }} – {{ selectedCruise()!.endDate }}
+        </div>
+      </div>
+
+      <div class="cd-card">
+        <div class="cd-label">Екскурзии</div>
+        <div class="cd-value">{{ getExcursionCount(selectedCruise()!) }}</div>
+      </div>
+
+      <div class="cd-card">
+        <div class="cd-label">Гости</div>
+        <div class="cd-value">{{ getGuestCount(selectedCruise()!._id) }} / {{ MAX_GUESTS }}</div>
+        <div class="cd-progress">
+          <div class="cd-progress-bar" [style.width.%]="getFilledPercent(selectedCruise()!._id)"></div>
+        </div>
+        <div class="cd-progress-num">{{ getFilledPercent(selectedCruise()!._id) }}%</div>
+      </div>
+    </div>
+
+    <!-- Форма за редакция (ако е активирана) -->
+    <form *ngIf="editMode" class="cd-form" (ngSubmit)="saveEdit()">
+      <div class="row">
+        <label for="cd-name">Име</label>
+        <input id="cd-name" type="text" [(ngModel)]="editModel.name" name="name" required />
+      </div>
+      <div class="row">
+        <label for="cd-start">Начало</label>
+        <input id="cd-start" type="date" [(ngModel)]="editModel.startDate" name="startDate" />
+      </div>
+      <div class="row">
+        <label for="cd-end">Край</label>
+        <input id="cd-end" type="date" [(ngModel)]="editModel.endDate" name="endDate" />
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-edit" [disabled]="saving">Запази</button>
+        <button type="button" class="btn btn-ghost" (click)="cancelEdit()" [disabled]="saving">Отказ</button>
+      </div>
+    </form>
+
+    <h4 class="cd-subtitle">Екскурзии към круиза</h4>
     <app-excursion-list [cruiseId]="selectedCruise()!._id"></app-excursion-list>
-    <!-- Добави тук каквито други детайли искаш -->
-    <button (click)="backToCruises()">Back</button>
   </div>
+
+
 </div>
 
 

@@ -12,7 +12,7 @@ import { CruiseService } from '../../services/cruise.service';
 @Component({
     selector: 'app-guest-edit',
     templateUrl: './guest-edit.component.html',
-    styleUrls: ['./guest-edit.component.css'],
+    styleUrl: './guest-edit.component.css',
     standalone: true,
     imports: [FormsModule, CommonModule]
     // standalone: true, imports: [...],TODO

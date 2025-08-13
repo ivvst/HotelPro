@@ -1,0 +1,97 @@
+.notif-dropdown {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: #fff;
+  border-radius: 8px;
+  width: 260px;
+  max-height: 320px;
+  overflow-y: auto;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  padding: 0.8rem;
+  z-index: 2100;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-10px);
+  transition: all 0.25s ease;
+}
+
+/* Когато dropdown е отворен */
+.notif-dropdown.open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.notif-dropdown h4 {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.3rem;
+}
+
+.notif-dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notif-dropdown li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #f1f1f1;
+  font-size: 0.9rem;
+}
+
+.notif-dropdown li:last-child {
+  border-bottom: none;
+}
+
+.notif-dropdown small {
+  color: #888;
+}
+
+.notif-dropdown input[type="checkbox"] {
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.notif-dropdown span {
+  font-size: 1.1rem;
+  color: #48bb78;
+}
+
+.task-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+.task-input input,
+.task-input select {
+  padding: 0.4rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.task-input button {
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.25s ease;
+}
+
+.task-input button:hover {
+  background: #43a047;
+}

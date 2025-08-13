@@ -1,46 +1,74 @@
 <table *ngIf="excursions.length" class="exc-table">
-  <thead>
+  <thead class="exc-thead">
     <tr>
       <th>Име</th>
       <th>Дата</th>
       <th>От</th>
       <th>До</th>
       <th>Описание</th>
-      <th>Действия</th>
+      <th class="th-actions">Действия</th>
     </tr>
   </thead>
+
   <tbody>
     <ng-container *ngFor="let ex of excursions">
-      <tr>
+      <tr class="exc-row" [class.row-flagged]="ex.deleteRequested">
         <td>
-          {{ ex.name }}
-          <span *ngIf="ex.deleteRequested" class="flag-delete" title="Маркирана за изтриване">⛔</span>
+          <div class="ex-title">
+            <span class="ex-name">{{ ex.name }}</span>
+            <span *ngIf="ex.deleteRequested" class="chip chip-danger" title="Маркирана за изтриване">⛔ Изтриване</span>
+          </div>
 
           <!-- метрики под името -->
           <div class="x-metrics">
-            <span class="cap">Капацитет: {{ ex.capacity ?? 0 }}</span>
-            <span class="wl">Чакащи: {{ ex.waitlist?.length || 0 }}</span>
+            <span class="cap chip chip-info">Капацитет: {{ ex.capacity ?? 0 }}</span>
+            <span class="wl chip chip-warn">Чакащи: {{ ex.waitlist?.length || 0 }}</span>
           </div>
         </td>
-        <td>{{ ex.date ? (ex.date | date:'dd/MM/yyyy') : '-' }}</td>
-        <td>{{ ex.fromTime || '-' }}</td>
-        <td>{{ ex.toTime || '-' }}</td>
-        <td>{{ (ex.description || '-') | shorten:50 }}</td>
+
+        <td class="nowrap">{{ ex.date ? (ex.date | date:'dd/MM/yyyy') : '-' }}</td>
+        <td class="nowrap">{{ ex.fromTime || '-' }}</td>
+        <td class="nowrap">{{ ex.toTime || '-' }}</td>
         <td>
-          <button *ngIf="isAdmin" (click)="startEdit(ex)">Редактирай</button>
-          <button *ngIf="isAdmin" (click)="deleteExcursion(ex._id!)">Изтрий</button>
-          <button *ngIf="ex.deleteRequested && isAdmin" (click)="rejectDelete(ex._id)">Откажи изтриване</button>
-          <button *ngIf="!isAdmin && !ex.deleteRequested" (click)="requestDelete(ex._id)">Маркирай за изтриване</button>
-          <span *ngIf="!isAdmin && ex.deleteRequested" class="flag-delete-text">Изчаква одобрение</span>
+          <span class="desc" [title]="ex.description || '-'">{{ (ex.description || '-') | shorten:80 }}</span>
+        </td>
 
-          <!-- бутон за гости -->
-          <button (click)="toggleGuests(ex._id)">Покажи гости</button>
+        <td>
+          <div class="exc-actions">
+            <button *ngIf="isAdmin" class="btn btn-edit" (click)="startEdit(ex)" aria-label="Редактирай">
+              ✏️ Редактирай
+            </button>
 
-          <!-- Инлайн смяна на капацитет (само за админ) -->
-          <div *ngIf="isAdmin" class="cap-inline">
-            <input type="number" min="1" max="20" class="capacity-input" [value]="ex.capacity || 1"
-              (change)="saveCapacity(ex, $event)" />
+            <button *ngIf="isAdmin" class="btn btn-danger" (click)="deleteExcursion(ex._id!)" aria-label="Изтрий">
+              🗑️ Изтрий
+            </button>
 
+            <button *ngIf="ex.deleteRequested && isAdmin" class="btn btn-warning"
+                    (click)="rejectDelete(ex._id)" aria-label="Откажи изтриване">
+              ↩ Откажи изтриване
+            </button>
+
+            <button *ngIf="!isAdmin && !ex.deleteRequested" class="btn btn-ghost"
+                    (click)="requestDelete(ex._id)" aria-label="Маркирай за изтриване">
+              ⛔ Маркирай за изтриване
+            </button>
+
+            <span *ngIf="!isAdmin && ex.deleteRequested" class="flag-delete-text">Изчаква одобрение</span>
+          </div>
+
+          <div class="row-actions">
+            <button class="btn btn-secondary" (click)="toggleGuests(ex._id)" aria-label="Покажи гости">
+              👥 Гости
+            </button>
+
+            <!-- Инлайн смяна на капацитет (само за админ) -->
+            <div *ngIf="isAdmin" class="cap-inline">
+              <label class="cap-label" for="cap-{{ ex._id }}">Капацитет:</label>
+              <input id="cap-{{ ex._id }}" type="number" min="1" max="999"
+                     class="capacity-input"
+                     [value]="ex.capacity || 1"
+                     (change)="saveCapacity(ex, $event)" />
+            </div>
           </div>
         </td>
       </tr>
@@ -48,9 +76,7 @@
       <!-- Ред с гостите -->
       <tr *ngIf="expanded[ex._id || '']">
         <td colspan="6">
-          <div *ngIf="loadingGuests[ex._id || '']" class="loading-overlay">
-            Зареждане на гости...
-          </div>
+          <div *ngIf="loadingGuests[ex._id || '']" class="loading-overlay">Зареждане на гости...</div>
 
           <div *ngIf="errorByExcursion[ex._id || '']" class="error">
             {{ errorByExcursion[ex._id || ''] }}
@@ -58,7 +84,7 @@
 
           <ul *ngIf="guestsByExcursion[ex._id || '']?.length" class="guest-list">
             <li *ngFor="let g of guestsByExcursion[ex._id || '']">
-              {{ g.firstName }} {{ g.lastName }} (Стая: {{ g.roomNumber || 'N/A' }})
+              {{ g.firstName }} {{ g.lastName }} <span class="muted">(Стая: {{ g.roomNumber || 'N/A' }})</span>
             </li>
           </ul>
 

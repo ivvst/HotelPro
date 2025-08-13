@@ -1,6 +1,10 @@
 const router = require('express').Router();
 
 const users = require('./users');
+const notifies = require('./notifies');
+
+
+
 const themes = require('./themes');
 const posts = require('./posts');
 const likes = require('./likes');
@@ -19,6 +23,9 @@ router.post('/logout', authController.logout);
 
 // Модули
 router.use('/users', users);
+router.use('/notify', notifies);
+
+
 router.use('/themes', themes);
 router.use('/posts', posts);
 router.use('/likes', likes);

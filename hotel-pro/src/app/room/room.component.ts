@@ -8,6 +8,7 @@ import { Cruise } from '../types/cruise';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
+import { ShortenPipe } from '../pipes/shorten.pipes';
 
 interface RoomsStats extends Room {
   guestCount: number;
@@ -17,7 +18,7 @@ interface RoomsStats extends Room {
 @Component({
   selector: 'app-room',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterModule],
+  imports: [FormsModule, CommonModule, RouterModule, ShortenPipe],
   templateUrl: './room.component.html',
   styleUrl: './room.component.css'
 })
@@ -27,14 +28,24 @@ export class RoomComponent implements OnInit {
   guests: Guest[] = [];
 
   selectedCruiseId: string | null = null;
-  // За popup-а (модал)
+  expandedGuestId: string | null = null;
   selectedRoom: RoomsStats | null = null;
+
   get filteredGuests(): Guest[] {
     if (!this.selectedCruiseId) return [];
     return this.guests.filter(g => g.cruiseId === this.selectedCruiseId);
   }
 
   get roomsStats(): RoomsStats[] {
+    console.log(this.rooms.map(room => {
+      const guestsInRoom = this.filteredGuests.filter(g => g.roomNumber.toString() == room.number);
+      return {
+        ...room,
+        guestCount: guestsInRoom.length,
+        isVip: guestsInRoom.some(g => g.isVIP)
+      };
+    }));
+
     return this.rooms.map(room => {
       const guestsInRoom = this.filteredGuests.filter(g => g.roomNumber.toString() == room.number);
       return {
@@ -43,6 +54,11 @@ export class RoomComponent implements OnInit {
         isVip: guestsInRoom.some(g => g.isVIP)
       };
     });
+  }
+
+
+  toggleGuestCard(guestId: string) {
+    this.expandedGuestId = this.expandedGuestId === guestId ? null : guestId;
   }
 
   get rhineRooms(): RoomsStats[] {

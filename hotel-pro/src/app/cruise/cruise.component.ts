@@ -1,4 +1,4 @@
-import { Component, signal, computed, OnInit } from '@angular/core';
+import { Component, signal, computed, OnInit, NgModule } from '@angular/core';
 import { CruiseService } from '../services/cruise.service';
 import { Cruise } from '../types/cruise';
 import { CommonModule } from '@angular/common';
@@ -7,12 +7,13 @@ import { GuestService } from '../services/guest.service';
 import { Guest } from '../types/guests';
 import { ExcursionListComponent } from './excursion/excursion-list.component';
 import { LoaderService } from '../services/loaded.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   providers: [CruiseService],
   selector: 'app-cruises',
   standalone: true,
-  imports: [CommonModule, ExcursionListComponent],
+  imports: [CommonModule, ExcursionListComponent,FormsModule],
   templateUrl: './cruise.component.html',
   styleUrl: './cruise.component.css'
 })
@@ -24,6 +25,13 @@ export class CruisesComponent implements OnInit {
   guestsView = signal(false);
   detailsView = signal(false);
   selectedCruise = signal<Cruise | null>(null);
+
+  editMode = false;
+  saving = false;
+  private editingId: string | null = null;
+
+  // моделът за редакция (частичен Cruise, без any)
+  editModel: Partial<Cruise> = {};
 
   readonly MAX_GUESTS = 100;
 
@@ -117,4 +125,79 @@ export class CruisesComponent implements OnInit {
   addCruise() {
     this.router.navigate(['/cruise/add']);
   }
+
+  startEdit(cruise: Cruise): void {
+    // ако не си в детайли, покажи ги
+    if (!this.selectedCruise() || this.selectedCruise()?._id !== cruise._id) {
+      this.showDetails(cruise);
+    }
+
+    this.editingId = cruise._id!;
+    this.editModel = {
+      name: cruise.name,
+      startDate: cruise.startDate,
+      endDate: cruise.endDate
+    };
+    this.editMode = true;
+  }
+
+  /** Отказ от редакция */
+  cancelEdit(): void {
+    this.editMode = false;
+    this.editingId = null;
+    this.editModel = {};
+  }
+
+  /** Запази промените – извикваш твоя updateCruise */
+  saveEdit(): void {
+    if (!this.editingId) return;
+
+    // минимална валидация
+    const payload: Partial<Cruise> = {
+      name: this.editModel.name?.trim() || undefined,
+      startDate: this.editModel.startDate,
+      endDate: this.editModel.endDate
+    };
+
+    this.saving = true;
+    this.cruiseService.updateCruise(this.editingId, payload).subscribe({
+      next: (updated: Cruise) => {
+        // ако показваме детайлите на същия круиз – актуализираме локално
+        if (this.selectedCruise() && this.selectedCruise()?._id === updated._id) {
+          // ако имаш setter за selectedCruise, ползвай него.
+          // Ако selectedCruise() чете от масив, увери се, че списъкът се рефрешва от refreshCruises().
+        }
+        this.saving = false;
+        this.editMode = false;
+        this.editingId = null;
+        this.editModel = {};
+        // списъкът така или иначе се рефрешва от tap(refreshCruises()) в service
+      },
+      error: () => {
+        this.saving = false;
+      }
+    });
+  }
+
+  /** Потвърждение и изтриване – ползваш твоя deleteCruise */
+  confirmDeleteCruise(cruise: Cruise): void {
+    const ok = window.confirm(`Delete cruise "${cruise.name}"?`);
+    if (!ok) return;
+
+    this.saving = true;
+    this.cruiseService.deleteCruise(cruise._id!).subscribe({
+      next: () => {
+        this.saving = false;
+        // ако трием избрания круиз – върни се към списъка
+        if (this.selectedCruise() && this.selectedCruise()?._id === cruise._id) {
+          this.backToCruises();
+        }
+        // списъкът ще се обнови от refreshCruises()
+      },
+      error: () => {
+        this.saving = false;
+      }
+    });
+  }
+
 }

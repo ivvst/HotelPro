@@ -3,7 +3,9 @@
   <label>Select cruise:</label>
   <select [(ngModel)]="selectedCruiseId">
     <option [ngValue]="null" disabled selected>-- Select --</option>
-    <option *ngFor="let c of cruises" [ngValue]="c._id">{{ c.name }}</option>
+    <option *ngFor="let c of cruises" [ngValue]="c._id" [title]="c.name">
+      {{ c.name | shorten:20 }}
+    </option>
   </select>
 </nav>
 
@@ -52,16 +54,37 @@
 
     <!-- Списък с гостите в стаята -->
     <div *ngIf="guestsInSelectedRoom().length > 0; else noGuests">
-      <div *ngFor="let guest of guestsInSelectedRoom()" class="modal-guest">
-        {{ guest.firstName }} {{ guest.lastName }}
-        <button class="edit-btn" (click)="editGuest(guest._id!)">
-          <span class="icon">✏️</span> Редактирай
-        </button>
+      <div *ngFor="let guest of guestsInSelectedRoom()" class="guest-card"
+        [class.expanded]="expandedGuestId === guest._id" (click)="toggleGuestCard(guest._id!)">
+
+        <!-- Лява част със снимка и стая -->
+        <div class="additional">
+          <div class="user-card">
+            <img [src]="guest.picture || 'assets/default-avatar.png'" alt="{{ guest.firstName }} {{ guest.lastName }}">
+            <div class="level">{{ guest.roomNumber || 'N/A' }}</div>
+          </div>
+        </div>
+
+        <!-- Дясна част с допълнителна информация -->
+        <div class="more-info">
+          <h3>{{ guest.firstName }} {{ guest.lastName }}</h3>
+          <p><b>Стая:</b> {{ guest.roomNumber || 'N/A' }}</p>
+          <p><b>Nationality:</b> {{ guest.nationality }}</p>
+          <p><b>Birthday:</b> {{ guest.birthDate }}</p>
+          <p><b>Email:</b> {{ guest.email }}</p>
+
+          <button class="edit-btn" (click)="editGuest(guest._id!); $event.stopPropagation()">
+            <span class="icon">✏️</span> Редактирай
+          </button>
+        </div>
       </div>
     </div>
+
     <ng-template #noGuests>
-      <div style="color: #888; font-style: italic;">Няма гости в тази стая.</div>
+      <div class="empty">Няма гости в тази стая</div>
     </ng-template>
+
+
 
     <!-- Останалите бутони -->
     <div class="modal-actions">
