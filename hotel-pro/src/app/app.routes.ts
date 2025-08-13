@@ -12,7 +12,7 @@ import { GuestAddComponent } from './guest/create-guest/guest-add.component';
 import { GuestEditComponent } from './guest/edit-guest/guest-edit.component';
 import { GuestDetailsComponent } from './guest-details.component/guest-details.component';
 import { ExcursionListComponent } from './cruise/excursion/excursion-list.component';
-import { ProfileComponent } from './profile.component';
+import { ProfileComponent } from './profile/profile.component';
 import { CruiseAddComponent } from './cruise/create-cruise/cruise-add.component';
 import { AdminGuard } from './guards/admin.guards';
 import { AuthGuard } from './guards/auth.guards';
@@ -28,7 +28,7 @@ export const routes: Routes = [
   { path: 'cruise/add', component: CruiseAddComponent, canActivate: [AdminGuard] }, // само за админ
   {
     path: 'profile', canActivate: [AuthGuard], loadComponent: () =>
-      import('./profile.component').then(m => m.ProfileComponent)
+      import('./profile/profile.component').then(m => m.ProfileComponent)
   },
   { path: 'cruise/:id', component: CruisesComponent, canActivate: [AuthGuard] },
   // excursion list for chosen cruise

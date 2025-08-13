@@ -1,21 +1,18 @@
-import { Component } from '@angular/core';
-import { Router, RouterModule, RouterOutlet } from '@angular/router';
-import { UserService } from './services/user.service';
+import { Component, HostListener, ElementRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-// import { DashboardComponent } from './dashboard/dashboard.component';
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate
-} from '@angular/animations';
+import { RouterModule, RouterOutlet } from '@angular/router';
+import { trigger, state, style, transition, animate } from '@angular/animations';
+
+import { UserService } from './services/user.service';
+import { NotifyDropdownComponent } from './notify/notify-dropdown.component'; // <-- standalone компонент (пътя нагласи при теб)
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, RouterModule, RouterOutlet],
+  standalone: true,
+  imports: [CommonModule, RouterModule, RouterOutlet, NotifyDropdownComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
+  styleUrls: ['./app.component.css'],
   animations: [
     trigger('slideSidebar', [
       state('in', style({ transform: 'translateX(0%)' })),
@@ -25,55 +22,64 @@ import {
   ]
 })
 export class AppComponent {
-  protected title = 'hotel-pro';
+  title = 'hotel-pro';
   sidebarVisible = true;
-  showDropdown = false;
   openMenu: string | null = null;
 
-  constructor(public userService: UserService, private router: Router) { }
+  profileDropdownOpen = false;
+  notifDropdownOpen = false;
 
+  constructor(
+    public userService: UserService,
+    private router: Router,
+    private eRef: ElementRef
+  ) {}
+
+  // Sidebar
+  toggleSidebar() {
+    this.sidebarVisible = !this.sidebarVisible;
+  }
+
+  // Left menu accordions
   toggleMenu(menuName: string) {
     this.openMenu = this.openMenu === menuName ? null : menuName;
   }
 
-  goToRoom(): void {
-    this.router.navigate(['/room'], { fragment: 'table' });
+  // Topbar: notifications & profile
+  toggleNotifications() {
+    this.notifDropdownOpen = !this.notifDropdownOpen;
+    if (this.notifDropdownOpen) this.profileDropdownOpen = false;
   }
 
-  loadProfile(): void {
+  toggleProfileMenu() {
+    this.profileDropdownOpen = !this.profileDropdownOpen;
+    if (this.profileDropdownOpen) this.notifDropdownOpen = false;
+  }
+
+  // Auth helpers
+  loadProfile() {
     this.userService.getProfileInfo().subscribe({
-      next: (user) => {
-        console.log('Profile:', user);
-        this.userService.setUser(user);
-      },
-      error: (err) => {
-        console.error('Грешка при взимане на профил:', err);
-        this.userService.clearUser();
-      }
+      next: (user) => this.userService.setUser(user),
+      error: () => this.userService.clearUser()
     });
   }
 
-  toggleSidebar(): void {
-    this.sidebarVisible = !this.sidebarVisible;
+  logout() {
+    this.profileDropdownOpen = false;
+    this.notifDropdownOpen = false;
+    this.userService.logout().subscribe(() => this.router.navigate(['/dashboard']));
   }
 
-  onNotifClick(): void {
-    console.log('🔔 Камбанката беше натисната');
+  isLoggedIn() {
+    return this.userService.isLogged;
   }
 
-  onProfileClick(): void {
-    this.showDropdown = !this.showDropdown;
-    console.log('Dropdown toggled:', this.showDropdown);
-  }
-
-  logout(): void {
-    this.showDropdown = false;
-    this.userService.logout().subscribe(() => {
-      this.router.navigate(['/dashboard']);
-    });
-  }
-
-  isLoggedIn(): boolean {
-    return this.userService.isLogged; // методът ти от UserService
+  // Auto-close dropdowns on outside click
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(ev: Event) {
+    if (!this.eRef.nativeElement.contains(ev.target)) {
+      this.profileDropdownOpen = false;
+      this.notifDropdownOpen = false;
+    }
   }
 }

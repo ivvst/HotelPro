@@ -2,11 +2,17 @@
 <section class="hero">
   <div class="hero-header">
     <h2>Админ панел</h2>
+
+    <select [ngModel]="activeCruiseId" (ngModelChange)="recalcForCruise($event)">
+      <option [ngValue]="null">Всички круизи</option>
+      <option *ngFor="let c of cruises" [ngValue]="c._id">{{ c.name }}</option>
+    </select>
+
     <button class="btn-create" (click)="onCreate()">+ Създай</button>
   </div>
 </section>
 
-<!-- Плаващи карти върху hero -->
+<!-- Статистики -->
 <div class="stats-cards-wrapper">
   <div class="stats-cards">
     <article class="card">
@@ -52,7 +58,15 @@
   </div>
 </div>
 
-<!-- Таблица с проекти/операции -->
+<!-- Допълнителен бар за избран круиз -->
+<div *ngIf="activeCruiseId" style="margin: 1rem;">
+  <strong>Заетост за круиза:</strong>
+  <div class="progress-bar" style="width: 200px;">
+    <div class="fill" [ngStyle]="progressStyle(getFilledPercent(activeCruiseId))"></div>
+  </div>
+</div>
+
+<!-- Таблица -->
 <section class="project-table-wrapper">
   <table class="project-table">
     <thead>
@@ -65,10 +79,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let p of projects">
-        <td>
-          <img *ngIf="p.iconUrl" [src]="p.iconUrl" alt="" />
-          {{ p.name }}
-        </td>
+        <td>{{ p.name }}</td>
         <td>
           <span [class]="badgeClass(p.priority)">
             {{ p.priority === 'high' ? 'High' : p.priority === 'medium' ? 'Medium' : 'Low' }}
@@ -82,10 +93,10 @@
         </td>
         <td>
           <span class="avatars">
-            <ng-container *ngFor="let a of p.teamAvatars; let idx = index">
+            <ng-container *ngFor="let a of p.teamAvatars | slice:0:2; let idx = index">
               <img [src]="a" [alt]="'member-'+idx" />
             </ng-container>
-            <span *ngIf="p.teamAvatars.length > 3" class="more">+{{ p.teamAvatars.length - 3 }}</span>
+            <span *ngIf="p.teamAvatars.length > 2" class="more">+{{ p.teamAvatars.length - 2 }}</span>
           </span>
         </td>
       </tr>

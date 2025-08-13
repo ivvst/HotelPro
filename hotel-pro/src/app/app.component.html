@@ -52,7 +52,7 @@
             </svg>
           </button>
 
-          <!-- Гости (не-логнат) -->
+          <!-- Гости -->
           <ul class="sub-menu" id="submenu-auth" *ngIf="openMenu === 'auth' && !userService.isLogged">
             <li routerLinkActive="active"><a routerLink="/login">Login</a></li>
             <li routerLinkActive="active"><a routerLink="/register">Register</a></li>
@@ -114,20 +114,23 @@
           <span class="hamburger-line"></span>
         </button>
 
-        <div class="nav-center">
-          <input type="text" placeholder="Search" class="nav-search" />
-        </div>
+      
 
         <div class="nav-actions" *ngIf="userService.isLogged">
-          <button class="btn-notif" aria-label="Notifications">🔔</button>
+          <!-- Notifications -->
+          <div class="nav-notify">
+            <button class="btn-notif" aria-label="Notifications" (click)="toggleNotifications()">🔔</button>
+            <app-notify-dropdown [open]="notifDropdownOpen"></app-notify-dropdown>
+          </div>
 
-          <div class="nav-profile" tabindex="0">
+          <!-- Profile -->
+          <div class="nav-profile" tabindex="0" (click)="toggleProfileMenu()">
             <img
               src="https://static.vecteezy.com/system/resources/previews/019/465/366/original/3d-user-icon-on-transparent-background-free-png.png"
               alt="User" class="profile-img" />
             <span class="status-indicator"></span>
 
-            <ul class="user-dropdown" role="menu" aria-label="User menu">
+            <ul class="user-dropdown" role="menu" aria-label="User menu" [class.open]="profileDropdownOpen">
               <li role="none">
                 <button role="menuitem" type="button" (click)="loadProfile()">Вземи профил</button>
               </li>
